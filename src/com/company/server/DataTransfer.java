@@ -1,6 +1,5 @@
 package com.company.server;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -21,13 +20,25 @@ public class DataTransfer {
 
     public String getForward() throws IOException {
         String inString = in.readUTF();
-        JsonObject json = new JsonParser().parse(inString).getAsJsonObject();
+        JsonObject json = JsonParser.parseString(inString).getAsJsonObject();
         return json.get("forward").getAsString();
     }
 
-    public void sendMap(String map) throws IOException {
+    public void sendFrame(String map) throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("map", map);
         out.writeUTF(json.toString());
+    }
+
+    public void close() {
+        try {
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isClose() {
+        return socket.isClosed();
     }
 }

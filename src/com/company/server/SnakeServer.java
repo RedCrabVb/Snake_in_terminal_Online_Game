@@ -3,35 +3,40 @@ package com.company.server;
 import com.company.Config;
 import com.company.Vector2;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class SnakeServer extends Thread {
-    private String mapString = "";
-    private String[][] map = new String[Config.X_SIZE][Config.Y_SIZE];;
-    private LinkedList<Vector2> snake = new LinkedList<>();
+    private String frame;
+    private String[][] map;
+    private LinkedList<Vector2> snake;
     private SnakeClient snakeClient;
-    private String moveControl = "a";
+    private String moveControl;
 
-    private boolean leftDirection = false;
-    private boolean rightDirection = true;
-    private boolean upDirection = false;
-    private boolean downDirection = false;
+    private Boolean leftDirection = false;
+    private Boolean rightDirection = false;
+    private Boolean upDirection = false;
+    private Boolean downDirection = false;
 
     @Override
     public void run() {
-        new Move().start();
+        new Thread(new Move()).start();
         Scanner input = new Scanner(System.in);
         while (true) {
             moveControl = input.nextLine();
+            if (moveControl.length() < 1) {
+                moveControl = Config.emptiness;
+            }
         }
     }
 
-    public SnakeServer(Socket socket, SnakeClient snakeClient) throws IOException {
+    public SnakeServer(SnakeClient snakeClient) {
+        frame = "";
+        map = new String[Config.X_SIZE][Config.Y_SIZE];
+
         int x = 15;
+        snake = new LinkedList<>();
         snake.add(new Vector2(x, 15));
         snake.add(new Vector2(x, 16));
         snake.add(new Vector2(x, 17));
@@ -45,59 +50,44 @@ public class SnakeServer extends Thread {
         this.snakeClient = snakeClient;
         this.snakeClient.setSnake(snake2);
 
-        print();
+        createFrame();
         info();
 
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 200; i++) {
             foodSpawn();
         }
+
+        moveControl = "a";
     }
 
-    private class Move extends Thread {
+    private class Move implements Runnable {
 
         @Override
         public void run() {
             while (true) {
-                String str = moveControl.charAt(0) + "";
-
-                if (str.equals("w") && !rightDirection) {
-                    leftDirection = true;
-                    upDirection = false;
-                    downDirection = false;
-                } else if (str.equals("s") && !leftDirection) {
-                    rightDirection = true;
-                    upDirection = false;
-                    downDirection = false;
-                } else if (str.equals("a") && !downDirection) {
-                    upDirection = true;
-                    rightDirection = false;
-                    leftDirection = false;
-                } else if (str.equals("d") && !upDirection) {
-                    downDirection = true;
-                    rightDirection = false;
-                    leftDirection = false;
-                }
-
-                if (leftDirection) {
-                    move(new Vector2(snake.get(0).getX() - 1, snake.get(0).getY()), snake);
-                } else if (rightDirection) {
-                    move(new Vector2(snake.get(0).getX() + 1, snake.get(0).getY()), snake);
-                } else if (upDirection) {
-                    move(new Vector2(snake.get(0).getX(), snake.get(0).getY() - 1), snake);
-                } else if(downDirection){
-                    move(new Vector2(snake.get(0).getX(), snake.get(0).getY() + 1), snake);
-                }
-
-                move(snakeClient.getVector2(), snakeClient.getSnake());
-                print();
-                snakeClient.setMap(mapString);
-                System.out.println(mapString);
-
                 try {
+                    String str = moveControl.charAt(0) + "";
+
+                    Vector2 vector2 = getDirectionsFromKeyboard(
+                            str,
+                            snake.get(0),
+                            leftDirection,
+                            rightDirection,
+                            upDirection,
+                            downDirection
+                    );
+
+                    move(vector2, snake);
+                    move(snakeClient.getVector2(), snakeClient.getSnake());
+
+                    print();
+                    snakeClient.setFrame(frame);
+
                     Thread.sleep(Config.threadRestTime);
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
+                    break;
                 }
             }
         }
@@ -122,21 +112,28 @@ public class SnakeServer extends Thread {
         }
     }
 
-    public void printSnake(LinkedList<Vector2> snake) {
+    private void print() {
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        System.out.println("Server");
+        frame = createFrame();
+        System.out.println(frame);
+    }
+
+    public void printSnake(LinkedList<Vector2> snake, String body) {
         snake.forEach(v -> {
-            map[v.getX()][v.getY()] = Config.snakeBody;
+            map[v.getX()][v.getY()] = body;
         });
 
         Vector2 v = snake.stream().findFirst().get();
         map[v.getX()][v.getY()] = Config.snakeHead;
     }
 
-    public void print() {
-        printSnake(snakeClient.getSnake());
-        printSnake(snake);
+    public String createFrame() {
+        printSnake(snakeClient.getSnake(), Config.BLUE + Config.snakeBody + Config.RESET);
+        printSnake(snake, Config.RED + Config.snakeBody + Config.RESET);
 
         var ref = new Object() {
-            String print = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+            String print = "";
         };
 
         Arrays.stream(map).forEach(f -> {
@@ -145,7 +142,10 @@ public class SnakeServer extends Thread {
             }
         );
 
-        mapString = ref.print;
+        ref.print += Config.RED_BOLD + "Server snake: " + snake.size() + Config.RESET + "\n";
+        ref.print += Config.BLUE_BOLD + "Client snake: " + snakeClient.getSnake().size() + Config.RESET + "\n";
+
+        return ref.print;
     }
 
     public void foodSpawn() {
@@ -175,8 +175,8 @@ public class SnakeServer extends Thread {
     }
 
     private void hitTheObject(LinkedList<Vector2> snake) {
-        if (map[snake.get(0).getX()][snake.get(0).getY()].equals(Config.wall)
-         || map[snake.get(0).getX()][snake.get(0).getY()].equals(Config.snakeBody)) {
+        String _map = map[snake.get(0).getX()][snake.get(0).getY()];
+        if (_map.equals(Config.wall) || _map.equals(Config.snakeBody)) {
             var ref = new Object() {
                 Integer f = 15;
             };
@@ -184,8 +184,11 @@ public class SnakeServer extends Thread {
                 ref.f = ref.f + 1;
                 map[Math.round(Config.X_SIZE/2)][ref.f] = c;
             });
+
             print();
-            System.out.println(mapString);
+            snakeClient.setFrame(frame);
+            snakeClient.close();
+
             System.exit(0);
         }
     }
@@ -193,5 +196,38 @@ public class SnakeServer extends Thread {
     public void remove(LinkedList<Vector2> snake) {
         map[snake.get(snake.size() - 1).getX()][snake.get(snake.size() - 1).getY()] = Config.emptiness;
         snake.removeLast();
+    }
+
+    public static Vector2 getDirectionsFromKeyboard(String forward, Vector2 headSnake, Boolean lDir, Boolean rDir, Boolean uDir, Boolean dDir) {
+        if (forward.equals("w") && !rDir) {
+            lDir = true;
+            uDir = false;
+            dDir = false;
+        } else if (forward.equals("s") && !lDir) {
+            rDir = true;
+            uDir = false;
+            dDir = false;
+        } else if (forward.equals("a") && !dDir) {
+            uDir = true;
+            rDir = false;
+            lDir = false;
+        } else if (forward.equals("d") && !uDir) {
+            dDir = true;
+            rDir = false;
+            lDir = false;
+        }
+
+        Vector2 vector2 = null;
+        if (lDir) {
+            vector2 = (new Vector2(headSnake.getX() - 1, headSnake.getY()));
+        } else if (rDir) {
+            vector2 = (new Vector2(headSnake.getX() + 1, headSnake.getY()));
+        } else if (uDir) {
+            vector2 = (new Vector2(headSnake.getX(), headSnake.getY() - 1));
+        } else if (dDir) {
+            vector2 = (new Vector2(headSnake.getX(), headSnake.getY() + 1));
+        }
+
+        return vector2;
     }
 }
