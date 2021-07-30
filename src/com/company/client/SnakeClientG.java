@@ -9,17 +9,22 @@ public class SnakeClientG extends Thread {
     private DataTransferG dataTransfer;
     private String control = "a";
 
+    private Thread move;
+    private Thread print;
+
     @Override
     public void run() {
-        new Thread(new Move()).start();
-        new Thread(new Print()).start();
+        move = new Thread(new Move());
+        print = new Thread(new Print());
+        move.start();
+        print.start();
         Scanner scanner = new Scanner(System.in);
         while (!dataTransfer.isClose()) {
             try {
                 control = scanner.nextLine();
             } catch (Exception e) {
                 e.printStackTrace();
-                dataTransfer.close();
+                shutdown();
                 break;
             }
         }
@@ -38,7 +43,7 @@ public class SnakeClientG extends Thread {
                     print();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    dataTransfer.close();
+                    shutdown();
                     break;
                 }
             }
@@ -55,7 +60,7 @@ public class SnakeClientG extends Thread {
                     Thread.sleep(Config.threadRestTime);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    dataTransfer.close();
+                    shutdown();
                     break;
                 }
             }
@@ -71,5 +76,9 @@ public class SnakeClientG extends Thread {
         System.out.println("Client");
 
         System.out.println(frame);
+    }
+
+    private void shutdown() {
+        System.exit(0);
     }
 }

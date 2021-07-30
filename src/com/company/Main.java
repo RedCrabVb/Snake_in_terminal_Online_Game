@@ -3,20 +3,15 @@ package com.company;
 import com.company.client.DataTransferG;
 import com.company.client.SnakeClientG;
 import com.company.server.DataTransfer;
-import com.company.server.SnakeClient;
-import com.company.server.SnakeServer;
+import com.company.server.Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-//        System.out.println(Config.GREEN_BACKGROUND + Config.snakeBody + Config.RESET);
-//        System.out.println(Config.RED + Config.snakeBody + Config.RESET);
-
+    public static void main(String[] args) throws IOException, InterruptedException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter 1 or 2: \n 1) Create server \n 2) Connect server");
         String selection = scanner.nextLine();
@@ -27,10 +22,7 @@ public class Main {
             ServerSocket socket = new ServerSocket(Integer.parseInt(port));
             Socket socketClient = socket.accept();
 
-            SnakeClient snakeClient = new SnakeClient(new DataTransfer(socketClient), new LinkedList<Vector2>());
-            SnakeServer snakeMy = new SnakeServer(snakeClient);
-            snakeClient.start();
-            snakeMy.start();
+            Server snakeMy = new Server(new DataTransfer(socketClient));
         } else if (selection.equals("2")) {
             System.out.println("Enter ip server");
             String ip = "127.0.0.1";//scanner.nextLine();
