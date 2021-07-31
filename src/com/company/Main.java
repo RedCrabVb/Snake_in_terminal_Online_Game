@@ -2,7 +2,7 @@ package com.company;
 
 import com.company.client.DataTransferG;
 import com.company.client.SnakeClientG;
-import com.company.server.DataTransfer;
+import com.company.server.DataTransferS;
 import com.company.server.Server;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter 1 or 2: \n 1) Create server \n 2) Connect server");
         String selection = scanner.nextLine();

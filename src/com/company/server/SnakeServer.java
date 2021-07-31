@@ -3,15 +3,14 @@ package com.company.server;
 import com.company.Vector2;
 
 import java.util.LinkedList;
+import java.util.Scanner;
 
-public class SnakeClientRef extends Snake implements Runnable {
-    private DataTransfer dataTransfer;
+public class SnakeServer extends Snake implements Runnable {
     private String moveController;
     private Thread getInput;
 
-    public SnakeClientRef(LinkedList<Vector2> snake, DataTransfer dataTransfer) {
+    public SnakeServer(LinkedList<Vector2> snake) {
         super(snake);
-        this.dataTransfer = dataTransfer;
         this.moveController = "";
         getInput = new Thread(new GetInput());
     }
@@ -20,9 +19,9 @@ public class SnakeClientRef extends Snake implements Runnable {
     public void run() {
         getInput.start();
         synchronized (this) {
-            while (!dataTransfer.isClose()) {
+            while (true) {
                 try {
-                    dataTransfer.sendFrame(super.getFrame());
+                    print();
                     wait();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -32,13 +31,19 @@ public class SnakeClientRef extends Snake implements Runnable {
         }
     }
 
+    private void print() {
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        System.out.println("Server");
+        System.out.println(super.getFrame());
+    }
+
     private class GetInput implements Runnable {
         @Override
         public void run() {
-            getDirectionsFromKeyboard(moveController, getSnake().get(0));
+            Scanner scanner = new Scanner(System.in);
             while (true) {
                 try {
-                    moveController = dataTransfer.getForward().charAt(0) + "";
+                    moveController = scanner.nextLine();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -55,7 +60,6 @@ public class SnakeClientRef extends Snake implements Runnable {
 
     @Override
     public void close() {
-        getInput.interrupt();
-        dataTransfer.close();
+        getInput.stop();
     }
 }

@@ -18,17 +18,29 @@ public class DataTransferG {
         out = new DataOutputStream(socket.getOutputStream());
     }
 
+    public void sendMessage(String msg) throws IOException {
+        out.writeUTF(msg);
+    }
+
+    public String getMessage() throws IOException {
+        return in.readUTF();
+    }
+
     public void sendForward(String forward) throws IOException {
         JsonObject json = new JsonObject();
-        json.addProperty("forward", forward);
-        out.writeUTF(json.toString());
+        json.addProperty("header", "SetDirection");
+        json.addProperty("move", forward);
+
+        sendMessage(json.toString());
     }
 
     public String getFrame() throws IOException {
-        String inStr = in.readUTF();
-        JsonObject json = JsonParser.parseString(inStr).getAsJsonObject();
-        System.out.println(inStr);
-        return json.get("map").getAsString();
+        JsonObject json = new JsonObject();
+        json.addProperty("header", "GetFrame");
+
+        String inStr = getMessage();
+        JsonObject jsonObj = JsonParser.parseString(inStr).getAsJsonObject();
+        return jsonObj.get("GetFrame").getAsString();
     }
 
     public void close() {

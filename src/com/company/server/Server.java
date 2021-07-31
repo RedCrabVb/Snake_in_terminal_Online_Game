@@ -1,39 +1,41 @@
 package com.company.server;
 
 import com.company.Config;
+import com.company.DataTransfer;
 import com.company.Vector2;
+import com.company.server.command.CommandSwitch;
+import com.company.server.command.GetFrame;
+import com.company.server.command.SetDirection;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.List;
 
 public class Server {
     private String frame;
     private String[][] map;
-    private SnakeClientRef snakeClient;
-    private SnakeServerRef snakeServer;
+    private SnakeClient snakeClient;
+    private SnakeServer snakeServer;
+    public static CommandSwitch commandSwitch;
 
     public Server(DataTransfer dataTransfer) {
         frame = "";
         map = new String[Config.X_SIZE][Config.Y_SIZE];
 
         int x = 15;
-        LinkedList<Vector2> snake = new LinkedList<>();
-        snake.addAll(Arrays.asList(
+        LinkedList<Vector2> snake = new LinkedList<>(Arrays.asList(
                 new Vector2(x, 15),
                 new Vector2(x, 16),
                 new Vector2(x, 17),
                 new Vector2(x, 18)));
         x += 3;
-        LinkedList<Vector2> snake2 = new LinkedList<>();
-        snake2.addAll(Arrays.asList(
+        LinkedList<Vector2> snake2 = new LinkedList<>(Arrays.asList(
                 new Vector2(x, 15),
                 new Vector2(x, 16),
                 new Vector2(x, 17),
                 new Vector2(x, 18)));
-
-        snakeClient = new SnakeClientRef(snake, dataTransfer);
-        snakeServer = new SnakeServerRef(snake2);
+        snakeClient = new SnakeClient(snake, dataTransfer);
+        snakeServer = new SnakeServer(snake2);
 
         info();
         for (int i = 0; i < 100; i++) {
@@ -41,9 +43,16 @@ public class Server {
         }
         frame = createFrame();
 
+        this.commandSwitch = new CommandSwitch();
+        commandSwitch.register("GetFrame", new GetFrame(dataTransfer));
+        commandSwitch.register("SetDirection", new SetDirection(snakeClient));
+
         new Thread(snakeClient).start();
         new Thread(snakeServer).start();
+        start();
+    }
 
+    private void start() {
         while (true) {
             try {
                 frame = createFrame();
@@ -82,9 +91,7 @@ public class Server {
     }
 
     public void printSnake(LinkedList<Vector2> snake, String body) {
-        snake.forEach(v -> {
-            map[v.getX()][v.getY()] = body;
-        });
+        snake.forEach(v -> map[v.getX()][v.getY()] = body);
 
         Vector2 v = snake.stream().findFirst().get();
         map[v.getX()][v.getY()] = Config.snakeHead;
@@ -122,7 +129,10 @@ public class Server {
                 spawnFood = false;
             }
 
-            for (var v : snakeServer.getSnake()) {
+            List<Vector2> snakeList = new LinkedList();
+            snakeList.addAll(snakeClient.getSnake());
+            snakeList.addAll(snakeServer.getSnake());
+            for (var v : snakeList) {
                 if (x == v.getX() && y == v.getY()) {
                     spawnFood = false;
                 }

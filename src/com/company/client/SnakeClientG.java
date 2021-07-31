@@ -19,12 +19,11 @@ public class SnakeClientG extends Thread {
         move.start();
         print.start();
         Scanner scanner = new Scanner(System.in);
-        while (!dataTransfer.isClose()) {
+        while (true) {
             try {
                 control = scanner.nextLine();
             } catch (Exception e) {
                 e.printStackTrace();
-                shutdown();
                 break;
             }
         }
@@ -35,15 +34,18 @@ public class SnakeClientG extends Thread {
     }
 
     private class Print implements Runnable {
+
         @Override
         public void run() {
-            while (!dataTransfer.isClose()) {
+            while (true) {
                 try {
                     frame = dataTransfer.getFrame();
                     print();
+                    if (frame.contains("Game over")) {
+                        shutdown();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    shutdown();
                     break;
                 }
             }
@@ -54,13 +56,12 @@ public class SnakeClientG extends Thread {
 
         @Override
         public void run() {
-            while (!dataTransfer.isClose()) {
+            while (true) {
                 try {
                     move(control);
                     Thread.sleep(Config.threadRestTime);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    shutdown();
                     break;
                 }
             }
@@ -79,6 +80,10 @@ public class SnakeClientG extends Thread {
     }
 
     private void shutdown() {
+        move.stop();
+//        print.stop();
+        this.stop();
+        dataTransfer.close();
         System.exit(0);
     }
 }

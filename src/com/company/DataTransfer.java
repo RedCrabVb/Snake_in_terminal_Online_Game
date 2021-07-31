@@ -1,4 +1,4 @@
-package com.company.server;
+package com.company;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -18,16 +18,12 @@ public class DataTransfer {
         out = new DataOutputStream(socket.getOutputStream());
     }
 
-    public String getForward() throws IOException {
-        String inString = in.readUTF();
-        JsonObject json = JsonParser.parseString(inString).getAsJsonObject();
-        return json.get("forward").getAsString();
+    public void sendMessage(String msg) throws IOException {
+        out.writeUTF(msg);
     }
 
-    public void sendFrame(String map) throws IOException {
-        JsonObject json = new JsonObject();
-        json.addProperty("map", map);
-        out.writeUTF(json.toString());
+    public String getMessage() throws IOException {
+        return in.readUTF();
     }
 
     public void close() {
