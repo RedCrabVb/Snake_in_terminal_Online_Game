@@ -44,6 +44,7 @@ public class SnakeClientG extends Thread {
                     if (frame.contains("Game over")) {
                         shutdown();
                     }
+                    Thread.sleep(Config.threadRestTime);
                 } catch (Exception e) {
                     e.printStackTrace();
                     break;
@@ -80,9 +81,6 @@ public class SnakeClientG extends Thread {
     }
 
     private void shutdown() {
-        move.stop();
-//        print.stop();
-        this.stop();
         dataTransfer.close();
         System.exit(0);
     }

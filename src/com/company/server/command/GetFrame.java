@@ -1,26 +1,26 @@
 package com.company.server.command;
 
 import com.company.DataTransfer;
+import com.company.server.SnakeClient;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
 
 public class GetFrame implements Command {
-    private String frame;
     private DataTransfer dataTransfer;
+    private SnakeClient snakeClient;
 
-    public GetFrame(DataTransfer dataTransfer) {
+    public GetFrame(DataTransfer dataTransfer, SnakeClient snakeClient) {
         this.dataTransfer = dataTransfer;
-    }
-
-    public void setFrame(String frame) {
-        this.frame = frame;
+        this.snakeClient = snakeClient;
     }
 
     @Override
     public void execute(JsonObject json) {
         try {
-            dataTransfer.sendMessage(frame);
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("frame", snakeClient.getFrame());
+            dataTransfer.sendMessage(jsonObj.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -18,14 +18,12 @@ public class SnakeClient extends Snake implements Runnable {
 
     @Override
     public void run() {
-        synchronized (this) {
-            while (true) {
-                try {
-                    Server.commandSwitch.execute(dataTransfer.getMessage());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
-                }
+        while (true) {
+            try {
+                Server.commandSwitch.execute(dataTransfer.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
             }
         }
     }

@@ -2,7 +2,6 @@ package com.company;
 
 import com.company.client.DataTransferG;
 import com.company.client.SnakeClientG;
-import com.company.server.DataTransferS;
 import com.company.server.Server;
 
 import java.io.IOException;

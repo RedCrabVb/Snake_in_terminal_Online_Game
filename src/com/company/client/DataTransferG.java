@@ -40,7 +40,7 @@ public class DataTransferG {
 
         String inStr = getMessage();
         JsonObject jsonObj = JsonParser.parseString(inStr).getAsJsonObject();
-        return jsonObj.get("GetFrame").getAsString();
+        return jsonObj.get("frame").getAsString();
     }
 
     public void close() {

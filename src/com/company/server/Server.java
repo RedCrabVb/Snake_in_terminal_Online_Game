@@ -44,7 +44,7 @@ public class Server {
         frame = createFrame();
 
         this.commandSwitch = new CommandSwitch();
-        commandSwitch.register("GetFrame", new GetFrame(dataTransfer));
+        commandSwitch.register("GetFrame", new GetFrame(dataTransfer, snakeClient));
         commandSwitch.register("SetDirection", new SetDirection(snakeClient));
 
         new Thread(snakeClient).start();
