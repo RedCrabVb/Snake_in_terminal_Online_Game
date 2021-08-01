@@ -1,5 +1,6 @@
 package com.company.server;
 
+import com.company.Config;
 import com.company.Vector2;
 
 import java.util.LinkedList;
@@ -10,7 +11,7 @@ public class SnakeServer extends Snake implements Runnable {
     private Thread getInput;
 
     public SnakeServer(LinkedList<Vector2> snake) {
-        super(snake);
+        super(snake, Config.BLUE, "server");
         this.moveController = "";
         getInput = new Thread(new GetInput());
     }

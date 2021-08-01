@@ -1,7 +1,11 @@
 package com.company.server;
 
+import com.company.Config;
 import com.company.DataTransfer;
 import com.company.Vector2;
+import com.company.server.command.CommandSwitch;
+import com.company.server.command.GetFrame;
+import com.company.server.command.SetDirection;
 
 import java.io.EOFException;
 import java.util.LinkedList;
@@ -9,18 +13,24 @@ import java.util.LinkedList;
 public class SnakeClient extends Snake implements Runnable {
     private DataTransfer dataTransfer;
     private String moveController;
+    private CommandSwitch commandSwitch;
 
     public SnakeClient(LinkedList<Vector2> snake, DataTransfer dataTransfer) {
-        super(snake);
+        super(snake, Config.RED, "client");
         this.dataTransfer = dataTransfer;
         this.moveController = "";
+
+
+        this.commandSwitch = new CommandSwitch();
+        commandSwitch.register("GetFrame", new GetFrame(dataTransfer, this));
+        commandSwitch.register("SetDirection", new SetDirection(this));
     }
 
     @Override
     public void run() {
         while (true) {
             try {
-                Server.commandSwitch.execute(dataTransfer.getMessage());
+                commandSwitch.execute(dataTransfer.getMessage());
             } catch (EOFException e) {
                 break;
             }

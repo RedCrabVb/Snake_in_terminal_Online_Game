@@ -3,68 +3,68 @@ package com.company.server;
 import com.company.Config;
 import com.company.DataTransfer;
 import com.company.Vector2;
-import com.company.server.command.CommandSwitch;
-import com.company.server.command.GetFrame;
-import com.company.server.command.SetDirection;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Server {
+public class Room {
     private String frame;
     private String[][] map;
-    private SnakeClient snakeClient;
-    private SnakeServer snakeServer;
-    public static CommandSwitch commandSwitch;
+    private List<Snake> snakeList;
+    private List<Thread> snakeThreadList;
 
-    private List<Thread> snakeList;
-
-    public Server(DataTransfer dataTransfer) {
+    private int startPosition = 15;
+    private String nameRoom;
+    public Room(String nameRoom) {
+        this.nameRoom = nameRoom;
         frame = "";
         map = new String[Config.X_SIZE][Config.Y_SIZE];
-        snakeList = new LinkedList<>();
+        snakeThreadList = new ArrayList<>();
+        snakeList = new ArrayList<>();
+    }
 
-        int x = 15;
+    public void addUser(DataTransfer dataTransfer) {
         LinkedList<Vector2> snake = new LinkedList<>(Arrays.asList(
-                new Vector2(x, 15),
-                new Vector2(x, 16),
-                new Vector2(x, 17),
-                new Vector2(x, 18)));
-        x += 3;
-        LinkedList<Vector2> snake2 = new LinkedList<>(Arrays.asList(
-                new Vector2(x, 15),
-                new Vector2(x, 16),
-                new Vector2(x, 17),
-                new Vector2(x, 18)));
-        snakeClient = new SnakeClient(snake, dataTransfer);
-        snakeServer = new SnakeServer(snake2);
+                new Vector2(startPosition, 15),
+                new Vector2(startPosition, 16),
+                new Vector2(startPosition, 17),
+                new Vector2(startPosition, 18)));
+        startPosition += 3;
+        SnakeClient snakeClient = new SnakeClient(snake, dataTransfer);
+        snakeList.add(snakeClient);
+        snakeThreadList.add(new Thread((Runnable) snakeClient));
+    }
 
+    public void addUser() {
+        LinkedList<Vector2> snake = new LinkedList<>(Arrays.asList(
+                new Vector2(startPosition, 15),
+                new Vector2(startPosition, 16),
+                new Vector2(startPosition, 17),
+                new Vector2(startPosition, 18)));
+        startPosition += 3;
+        SnakeServer server = new SnakeServer(snake);
+        snakeList.add(server);
+        snakeThreadList.add(new Thread((Runnable) server));
+    }
+
+    public void start() {
         info();
         for (int i = 0; i < 100; i++) {
             foodSpawn();
         }
         frame = createFrame();
 
-        this.commandSwitch = new CommandSwitch();
-        commandSwitch.register("GetFrame", new GetFrame(dataTransfer, snakeClient));
-        commandSwitch.register("SetDirection", new SetDirection(snakeClient));
-
-        snakeList.add(new Thread(snakeClient));
-        snakeList.add(new Thread(snakeServer));
-    }
-
-    public void start() {
-        snakeList.forEach(t -> t.start());
+        snakeThreadList.forEach(t -> t.start());
         while (true) {
             try {
                 frame = createFrame();
 
-                snakeServer.updateFrame(frame);
-                snakeClient.updateFrame(frame);
-
-                move(snakeServer.getVector2(), snakeServer.getSnake());
-                move(snakeClient.getVector2(), snakeClient.getSnake());
+                snakeList.forEach(snake -> {
+                    snake.updateFrame(frame);
+                    move(snake.getVector2(), snake.getSnake());
+                });
 
                 Thread.sleep(Config.threadRestTime);
             } catch (Exception e) {
@@ -101,8 +101,7 @@ public class Server {
     }
 
     public String createFrame() {
-        printSnake(snakeClient.getSnake(), Config.BLUE + Config.snakeBody + Config.RESET);
-        printSnake(snakeServer.getSnake(), Config.RED + Config.snakeBody + Config.RESET);
+        snakeList.forEach(s -> printSnake(s.getSnake(), s.getColor() + Config.snakeBody + Config.RESET));
 
         var ref = new Object() {
             String print = "";
@@ -114,8 +113,9 @@ public class Server {
                 }
         );
 
-        ref.print += Config.RED_BOLD + "Server snake: " + snakeServer.getSnake().size() + Config.RESET + "\n";
-        ref.print += Config.BLUE_BOLD + "Client snake: " + snakeClient.getSnake().size() + Config.RESET + "\n";
+        snakeList.forEach(s -> {
+            ref.print += s.getColor() + " " + s.getName() + " " + s.getSnake().size() + Config.RESET + "\n";
+        });
 
         return ref.print;
     }
@@ -133,8 +133,8 @@ public class Server {
             }
 
             List<Vector2> snakeList = new LinkedList();
-            snakeList.addAll(snakeClient.getSnake());
-            snakeList.addAll(snakeServer.getSnake());
+            snakeList.addAll(this.snakeList.get(0).getSnake());
+            snakeList.addAll(this.snakeList.get(0).getSnake());
             for (var v : snakeList) {
                 if (x == v.getX() && y == v.getY()) {
                     spawnFood = false;
@@ -165,8 +165,7 @@ public class Server {
         });
 
         frame = createFrame();
-        snakeClient.updateFrame(frame);
-        snakeServer.updateFrame(frame);
+        snakeList.forEach(s -> s.updateFrame(frame));
 
         try {
             Thread.sleep(3000);
@@ -174,7 +173,7 @@ public class Server {
             e.printStackTrace();
         }
 
-        snakeList.forEach(t -> t.stop());
+        snakeThreadList.forEach(t -> t.stop());
 
         System.exit(0);
     }
@@ -191,4 +190,12 @@ public class Server {
         snake.removeLast();
     }
 
+    @Override
+    public String toString() {
+        return String.format("%d/2 %s", snakeList.size(), nameRoom);
+    }
+
+    public boolean isReady() {
+        return snakeList.size() == 2;
+    }
 }

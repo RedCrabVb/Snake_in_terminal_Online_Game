@@ -2,6 +2,7 @@ package com.company.client;
 
 import com.company.Config;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class SnakeClientG extends Thread {
@@ -9,25 +10,61 @@ public class SnakeClientG extends Thread {
     private DataTransferG dataTransfer;
     private String control = "a";
 
-    private Thread move;
     private Thread print;
 
     @Override
     public void run() {
-//        move = new Thread(new Move());
-        print = new Thread(new Print());
-//        move.start();
-        print.start();
         Scanner scanner = new Scanner(System.in);
+
         while (true) {
-            try {
-                control = scanner.nextLine();
-                move(control);
-            } catch (Exception e) {
-                e.printStackTrace();
-                break;
+            System.out.println("Enter menu item");
+            System.out.println("1. Show list rooms");
+            System.out.println("2. Connection to rooms");
+            String inputData = scanner.nextLine();
+            switch (inputData) {
+                case "1":
+                    try {
+                        System.out.println(dataTransfer.getListRoom());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "2":
+                    System.out.println("Enter number room");
+                    int numberRoom = Integer.valueOf(scanner.nextLine());
+                    try {
+                        dataTransfer.connectionToRoom(numberRoom);
+                        print = new Thread(new Print());
+                        print.start();
+
+                        while (true) {
+                            try {
+                                control = scanner.nextLine();
+                                move(control);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                break;
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                default:
+                    System.out.println("Error enter data");
+                    break;
             }
         }
+
+//        while (true) {
+//            try {
+//                control = scanner.nextLine();
+//                move(control);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                break;
+//            }
+//        }
     }
 
     public SnakeClientG(DataTransferG dataTransfer) {
@@ -53,22 +90,6 @@ public class SnakeClientG extends Thread {
             }
         }
     }
-
-//    private class Move implements Runnable {
-//
-//        @Override
-//        public void run() {
-//            while (true) {
-//                try {
-//                    move(control);
-//                    Thread.sleep(Config.threadRestTime);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    break;
-//                }
-//            }
-//        }
-//    }
 
     private void move(String forward) throws Exception {
         dataTransfer.sendForward(forward);

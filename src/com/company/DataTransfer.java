@@ -23,7 +23,9 @@ public class DataTransfer {
     }
 
     public String getMessage() throws IOException {
-        return in.readUTF();
+        String msg = in.readUTF();
+//        System.out.println(msg);
+        return msg;
     }
 
     public void close() {

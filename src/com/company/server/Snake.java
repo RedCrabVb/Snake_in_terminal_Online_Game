@@ -9,10 +9,14 @@ public abstract class Snake {
     private Vector2 vector2;
     private LinkedList<Vector2> snake;
     private String frame = "";
+    private String color;
+    private String name;
 
     private Controller controller = Controller.up;
 
-    public Snake(LinkedList<Vector2> snake) {
+    public Snake(LinkedList<Vector2> snake, String color, String name) {
+        this.name = name;
+        this.color = color;
         this.snake = snake;
     }
 
@@ -64,4 +68,12 @@ public abstract class Snake {
     public abstract void updateFrame(String frame);
 
     public abstract void close();
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
