@@ -41,7 +41,7 @@ public class DataTransferG {
     }
 
     public String getListRoom() throws IOException {
-        sendCommand("GetRoomList");
+        sendCommand("GetRoom");
         return getMessage().get("listRoom").getAsString();
     }
 

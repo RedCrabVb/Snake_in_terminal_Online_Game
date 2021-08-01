@@ -27,6 +27,10 @@ public class Main {
         return ref.print;
     }
 
+    public static void removeRoom(Room room) {
+        rooms.remove(room);
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter 1 or 2: \n 1) Create server \n 2) Connect server");
@@ -35,12 +39,12 @@ public class Main {
             System.out.println("Enter port for program");
             String port = scanner.nextLine();
 
-            new MenuServer(rooms).start();
+            new Thread(new MenuServer(rooms)).start();
 
             ServerSocket socket = new ServerSocket(Integer.parseInt(port));
             while (true) {
                 Socket socketClient = socket.accept();
-                new MenuClient(new DataTransfer(socketClient), rooms).start();
+                new Thread(new MenuClient(new DataTransfer(socketClient), rooms)).start();
             }
 
         } else if (selection.equals("2")) {
