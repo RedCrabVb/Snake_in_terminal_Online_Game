@@ -2,8 +2,8 @@ package com.company.server;
 
 import com.company.DataTransfer;
 import com.company.Vector2;
-import com.company.server.Server;
 
+import java.io.EOFException;
 import java.util.LinkedList;
 
 public class SnakeClient extends Snake implements Runnable {
@@ -21,7 +21,10 @@ public class SnakeClient extends Snake implements Runnable {
         while (true) {
             try {
                 Server.commandSwitch.execute(dataTransfer.getMessage());
-            } catch (Exception e) {
+            } catch (EOFException e) {
+                break;
+            }
+            catch (Exception e) {
                 e.printStackTrace();
                 break;
             }
@@ -33,13 +36,12 @@ public class SnakeClient extends Snake implements Runnable {
     }
 
     @Override
-    public synchronized void updateFrame(String frame) {
+    public void updateFrame(String frame) {
         setFrame(frame);
         getDirectionsFromKeyboard(moveController, getSnake().get(0));
     }
 
     @Override
     public void close() {
-        dataTransfer.close();
     }
 }

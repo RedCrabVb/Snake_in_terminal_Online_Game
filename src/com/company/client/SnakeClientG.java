@@ -14,14 +14,15 @@ public class SnakeClientG extends Thread {
 
     @Override
     public void run() {
-        move = new Thread(new Move());
+//        move = new Thread(new Move());
         print = new Thread(new Print());
-        move.start();
+//        move.start();
         print.start();
         Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
                 control = scanner.nextLine();
+                move(control);
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
@@ -53,21 +54,21 @@ public class SnakeClientG extends Thread {
         }
     }
 
-    private class Move implements Runnable {
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    move(control);
-                    Thread.sleep(Config.threadRestTime);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }
-    }
+//    private class Move implements Runnable {
+//
+//        @Override
+//        public void run() {
+//            while (true) {
+//                try {
+//                    move(control);
+//                    Thread.sleep(Config.threadRestTime);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    break;
+//                }
+//            }
+//        }
+//    }
 
     private void move(String forward) throws Exception {
         dataTransfer.sendForward(forward);
@@ -81,6 +82,7 @@ public class SnakeClientG extends Thread {
     }
 
     private void shutdown() {
+//        move.stop();
         dataTransfer.close();
         System.exit(0);
     }

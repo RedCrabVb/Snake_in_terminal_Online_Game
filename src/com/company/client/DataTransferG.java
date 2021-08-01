@@ -37,6 +37,7 @@ public class DataTransferG {
     public String getFrame() throws IOException {
         JsonObject json = new JsonObject();
         json.addProperty("header", "GetFrame");
+        sendMessage(json.toString());
 
         String inStr = getMessage();
         JsonObject jsonObj = JsonParser.parseString(inStr).getAsJsonObject();

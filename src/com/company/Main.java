@@ -21,7 +21,8 @@ public class Main {
             ServerSocket socket = new ServerSocket(Integer.parseInt(port));
             Socket socketClient = socket.accept();
 
-            Server snakeMy = new Server(new DataTransfer(socketClient));
+            Server snake = new Server(new DataTransfer(socketClient));
+            snake.start();
         } else if (selection.equals("2")) {
             System.out.println("Enter ip server");
             String ip = "127.0.0.1";//scanner.nextLine();
@@ -31,7 +32,7 @@ public class Main {
             SnakeClientG snakeClientGame = new SnakeClientG(new DataTransferG(new Socket(ip, Integer.parseInt(port))));
             snakeClientGame.start();
         } else {
-            new IOException("Error enter data");
+            throw new IOException("Error enter data");
         }
     }
 }

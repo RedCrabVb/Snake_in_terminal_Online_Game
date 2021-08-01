@@ -18,9 +18,12 @@ public class Server {
     private SnakeServer snakeServer;
     public static CommandSwitch commandSwitch;
 
+    private List<Thread> snakeList;
+
     public Server(DataTransfer dataTransfer) {
         frame = "";
         map = new String[Config.X_SIZE][Config.Y_SIZE];
+        snakeList = new LinkedList<>();
 
         int x = 15;
         LinkedList<Vector2> snake = new LinkedList<>(Arrays.asList(
@@ -47,12 +50,12 @@ public class Server {
         commandSwitch.register("GetFrame", new GetFrame(dataTransfer, snakeClient));
         commandSwitch.register("SetDirection", new SetDirection(snakeClient));
 
-        new Thread(snakeClient).start();
-        new Thread(snakeServer).start();
-        start();
+        snakeList.add(new Thread(snakeClient));
+        snakeList.add(new Thread(snakeServer));
     }
 
-    private void start() {
+    public void start() {
+        snakeList.forEach(t -> t.start());
         while (true) {
             try {
                 frame = createFrame();
@@ -171,8 +174,7 @@ public class Server {
             e.printStackTrace();
         }
 
-        snakeClient.close();
-        snakeServer.close();
+        snakeList.forEach(t -> t.stop());
 
         System.exit(0);
     }
