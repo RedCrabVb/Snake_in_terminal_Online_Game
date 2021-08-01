@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Room {
+public class Room extends Thread {
     private String frame;
     private String[][] map;
     private List<Snake> snakeList;
@@ -35,6 +35,10 @@ public class Room {
         SnakeClient snakeClient = new SnakeClient(snake, dataTransfer);
         snakeList.add(snakeClient);
         snakeThreadList.add(new Thread((Runnable) snakeClient));
+
+        if (isReady()) {
+            start();
+        }
     }
 
     public void addUser() {
@@ -47,9 +51,14 @@ public class Room {
         SnakeServer server = new SnakeServer(snake);
         snakeList.add(server);
         snakeThreadList.add(new Thread((Runnable) server));
+
+        if (isReady()) {
+            start();
+        }
     }
 
-    public void start() {
+    @Override
+    public void run() {
         info();
         for (int i = 0; i < 100; i++) {
             foodSpawn();
@@ -134,7 +143,7 @@ public class Room {
 
             List<Vector2> snakeList = new LinkedList();
             snakeList.addAll(this.snakeList.get(0).getSnake());
-            snakeList.addAll(this.snakeList.get(0).getSnake());
+            snakeList.addAll(this.snakeList.get(1).getSnake());
             for (var v : snakeList) {
                 if (x == v.getX() && y == v.getY()) {
                     spawnFood = false;
@@ -175,7 +184,7 @@ public class Room {
 
         snakeThreadList.forEach(t -> t.stop());
 
-        System.exit(0);
+        this.stop();
     }
 
     private void hitTheObject(LinkedList<Vector2> snake) {

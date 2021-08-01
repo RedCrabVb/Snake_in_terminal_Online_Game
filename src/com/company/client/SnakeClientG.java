@@ -9,6 +9,7 @@ public class SnakeClientG extends Thread {
     private String frame = "";
     private DataTransferG dataTransfer;
     private String control = "a";
+    private boolean gameIsActive = false;
 
     private Thread print;
 
@@ -36,8 +37,9 @@ public class SnakeClientG extends Thread {
                         dataTransfer.connectionToRoom(numberRoom);
                         print = new Thread(new Print());
                         print.start();
+                        gameIsActive = true;
 
-                        while (true) {
+                        while (gameIsActive) {
                             try {
                                 control = scanner.nextLine();
                                 move(control);
@@ -56,15 +58,6 @@ public class SnakeClientG extends Thread {
             }
         }
 
-//        while (true) {
-//            try {
-//                control = scanner.nextLine();
-//                move(control);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                break;
-//            }
-//        }
     }
 
     public SnakeClientG(DataTransferG dataTransfer) {
@@ -75,12 +68,12 @@ public class SnakeClientG extends Thread {
 
         @Override
         public void run() {
-            while (true) {
+            while (gameIsActive) {
                 try {
                     frame = dataTransfer.getFrame();
                     print();
                     if (frame.contains("Game over")) {
-                        shutdown();
+                        gameIsActive = false;
                     }
                     Thread.sleep(Config.threadRestTime);
                 } catch (Exception e) {
@@ -100,11 +93,5 @@ public class SnakeClientG extends Thread {
         System.out.println("Client");
 
         System.out.println(frame);
-    }
-
-    private void shutdown() {
-//        move.stop();
-        dataTransfer.close();
-        System.exit(0);
     }
 }
