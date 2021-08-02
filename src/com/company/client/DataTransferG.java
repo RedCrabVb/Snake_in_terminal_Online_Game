@@ -21,6 +21,7 @@ public class DataTransferG {
     public void sendMessage(String msg) throws IOException {
         System.out.println(msg);
         out.writeUTF(msg);
+        socket.getOutputStream().flush();
     }
 
     public JsonObject getMessage() throws IOException {

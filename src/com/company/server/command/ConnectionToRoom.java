@@ -5,6 +5,7 @@ import com.company.server.Room;
 import com.company.server.menu.MenuClient;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ConnectionToRoom implements Command {
@@ -22,9 +23,15 @@ public class ConnectionToRoom implements Command {
     public void execute(JsonObject json) {
         int numberRoom = json.get("numberRoom").getAsInt() - 1;
         try {
-            roomList.get(numberRoom).addUser(dataTransfer, menuClient);
-            menuClient.stopMenu();
-        } catch (IndexOutOfBoundsException e) {
+            try {
+                roomList.get(numberRoom).addUser(dataTransfer, menuClient);
+                menuClient.stopMenu();
+                dataTransfer.sendMessage("{\"access\": " + "true" + "}");
+            } catch (IndexOutOfBoundsException e) {
+                dataTransfer.sendMessage("{\"access\": " + "false" + "}");
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -1,6 +1,7 @@
 package com.company.client;
 
 import com.company.Config;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -36,6 +37,11 @@ public class SnakeClientG extends Thread {
                     int numberRoom = Integer.valueOf(scanner.nextLine());
                     try {
                         dataTransfer.connectionToRoom(numberRoom);
+                        JsonObject json = dataTransfer.getMessage();
+                        if (!json.get("access").getAsBoolean()) {
+                            System.out.println("Cant connection to room");
+                            continue;
+                        }
                         print = new Thread(new Print());
                         print.start();
 
@@ -57,7 +63,6 @@ public class SnakeClientG extends Thread {
 
                         Thread.sleep(4000);
 
-//                        dataTransfer.sendCommand("CloseRoom");
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
