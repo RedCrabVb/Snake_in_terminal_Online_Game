@@ -1,8 +1,11 @@
 package com.company.server.menu;
 
 import com.company.Main;
+import com.company.dataBase.DataBase;
+import com.company.dataBase.MySqlDataBase;
 import com.company.server.Room;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.Scanner;
 
@@ -16,12 +19,41 @@ public class MenuServer extends Menu implements Runnable {
     @Override
     public synchronized void run() {
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter your username and password, " +
+                "if a user with this name does not exist, " +
+                "then it will be created, " +
+                "if it exists and the password is wrong, " +
+                "then there will be an error during registration");
+        System.out.print("Username: ");
+        String userName = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
+        try {
+            DataBase dataBase = new MySqlDataBase(
+                    "localhost",
+                    "3306",
+                    "SnakeDB",
+                    "username",
+                    "password");
+            if (!dataBase.isRealAccount(userName, password)) {
+                System.out.println("False data");
+            }
+
+            dataBase.getRecorde();
+            dataBase.addRecorde("test", 3);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         while (!Thread.currentThread().isInterrupted()) {
             if (isRunMenu()) {
                 System.out.println("Enter menu item");
                 System.out.println("1. Show list rooms");
                 System.out.println("2. Connection to rooms");
                 System.out.println("3. Create rooms");
+                System.out.println("3. Users recorde");
 
                 try {
                     String inputData = scanner.nextLine();
