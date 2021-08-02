@@ -20,13 +20,12 @@ public class SnakeServer extends Snake implements Runnable {
     public void run() {
         getInput.start();
         synchronized (this) {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     print();
                     wait();
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
-                    break;
                 }
             }
         }
@@ -42,7 +41,7 @@ public class SnakeServer extends Snake implements Runnable {
         @Override
         public void run() {
             Scanner scanner = new Scanner(System.in);
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     moveController = scanner.nextLine();
                 } catch (Exception e) {
@@ -61,6 +60,6 @@ public class SnakeServer extends Snake implements Runnable {
 
     @Override
     public void close() {
-        getInput.stop();
+        getInput.interrupt();
     }
 }

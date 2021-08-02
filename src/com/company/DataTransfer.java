@@ -4,9 +4,9 @@ import java.io.*;
 import java.net.Socket;
 
 public class DataTransfer {
-    private Socket socket;
-    private DataInput in;
-    private DataOutput out;
+    private volatile Socket socket;
+    private volatile DataInput in;
+    private volatile DataOutput out;
 
     public DataTransfer(Socket socket) throws IOException {
         this.socket = socket;

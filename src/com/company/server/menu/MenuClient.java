@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class MenuClient extends Menu implements Runnable {
-    private DataTransfer dataTransfer;
+    private volatile DataTransfer dataTransfer;
     private CommandSwitch commandSwitch;
 
     public MenuClient(DataTransfer dataTransfer, List<Room> roomList) {

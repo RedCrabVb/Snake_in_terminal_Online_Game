@@ -9,7 +9,7 @@ import java.net.Socket;
 public class DataTransferG {
     private Socket socket;
     private DataInput in;
-    private DataOutput out;
+    private DataOutputStream out;
 
     public DataTransferG(Socket socket) throws IOException {
         this.socket = socket;
@@ -20,6 +20,7 @@ public class DataTransferG {
 
     public void sendMessage(String msg) throws IOException {
         out.writeUTF(msg);
+        out.flush();
     }
 
     public JsonObject getMessage() throws IOException {

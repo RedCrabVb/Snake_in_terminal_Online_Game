@@ -64,15 +64,16 @@ public class Room extends Thread {
 
     @Override
     public void run() {
-        info();
+        createWall();
         for (int i = 0; i < 100; i++) {
             foodSpawn();
         }
-        frame = createFrame();
 
         snakeThreadList.forEach(Thread::start);
         while (!Thread.currentThread().isInterrupted()) {
             try {
+                Thread.sleep(Config.threadRestTime);
+
                 frame = createFrame();
 
                 snakeList.forEach(snake -> {
@@ -80,7 +81,6 @@ public class Room extends Thread {
                     move(snake.getVector2(), snake.getSnake());
                 });
 
-                Thread.sleep(Config.threadRestTime);
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
@@ -88,20 +88,13 @@ public class Room extends Thread {
         }
     }
 
-    public void info() {
+    public void createWall() {
         for (int i = 0; i < Config.X_SIZE; i++) {
             for (int j = 0; j < Config.Y_SIZE; j++) {
-                if (i == 0) {
-                    map[i][j] = Config.wall;
-                }
-                if (i == Config.X_SIZE - 1) {
+                if (i == 0 || i == Config.X_SIZE - 1 || j == 0 || j == Config.Y_SIZE - 1) {
                     map[i][j] = Config.wall;
                 } else {
-                    if (j == 0 || j == Config.Y_SIZE - 1) {
-                        map[i][j] = Config.wall;
-                    } else if (i != 0) {
-                        map[i][j] = Config.emptiness;
-                    }
+                    map[i][j] = Config.emptiness;
                 }
             }
         }
@@ -184,7 +177,7 @@ public class Room extends Thread {
         }
 
         snakeList.forEach(Snake::close);
-        snakeThreadList.forEach(Thread::stop);
+        snakeThreadList.forEach(t -> t.interrupt());
         for (var m : menus) {
             synchronized (m) {
                 m.notifyAll();

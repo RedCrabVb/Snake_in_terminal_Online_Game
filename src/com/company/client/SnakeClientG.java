@@ -25,6 +25,7 @@ public class SnakeClientG extends Thread {
             switch (inputData) {
                 case "1":
                     try {
+                        System.out.println("get list room");
                         System.out.println(dataTransfer.getListRoom());
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -48,7 +49,11 @@ public class SnakeClientG extends Thread {
                                 break;
                             }
                         }
-                    } catch (IOException e) {
+
+                        dataTransfer.sendCommand("CloseRoom");
+
+                        Thread.sleep(4000);
+                    } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
                     break;
