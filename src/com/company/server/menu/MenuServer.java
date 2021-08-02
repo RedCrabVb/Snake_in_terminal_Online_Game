@@ -31,25 +31,10 @@ public class MenuServer extends Menu implements Runnable {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        Main.dataBase = null;
-        try {
-            Main.dataBase = new MySqlDataBase(
-                    "localhost",
-                    "3306",
-                    "SnakeDB",
-                    "username",
-                    "password");
-
-            if (!Main.dataBase.isRealAccount(username, password)) {
-                System.out.println("False data");
-                System.exit(0);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.exit(-1);
+        if (!Main.dataBase.isRealAccount(username, password)) {
+            System.out.println("False data");
+            System.exit(0);
         }
-
 
         while (!Thread.currentThread().isInterrupted()) {
             if (isRunMenu()) {

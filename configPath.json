@@ -1,0 +1,7 @@
+{
+  "serverName": "localhost",
+  "port": 3306,
+  "nameDB": "SnakeDB",
+  "username": "username",
+  "userPassword": "password"
+}
