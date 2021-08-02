@@ -2,6 +2,7 @@ package com.company.server;
 
 import com.company.Config;
 import com.company.Vector2;
+import com.company.server.menu.Menu;
 
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -9,11 +10,13 @@ import java.util.Scanner;
 public class SnakeServer extends Snake implements Runnable {
     private String moveController;
     private Thread getInput;
+    private Thread thread;
 
-    public SnakeServer(LinkedList<Vector2> snake) {
-        super(snake, Config.BLUE, "server");
+    public SnakeServer(LinkedList<Vector2> snake, Menu menu) {
+        super(snake, Config.BLUE, menu);
         this.moveController = "";
         getInput = new Thread(new GetInput());
+        thread = new Thread(this);
     }
 
     @Override
@@ -61,5 +64,10 @@ public class SnakeServer extends Snake implements Runnable {
     @Override
     public void close() {
         getInput.interrupt();
+    }
+
+    @Override
+    public Thread getThread() {
+        return thread;
     }
 }

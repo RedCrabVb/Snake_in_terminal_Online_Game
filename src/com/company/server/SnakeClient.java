@@ -7,6 +7,7 @@ import com.company.server.command.CloseRoom;
 import com.company.server.command.CommandSwitch;
 import com.company.server.command.GetFrame;
 import com.company.server.command.SetDirection;
+import com.company.server.menu.Menu;
 
 import java.io.EOFException;
 import java.util.LinkedList;
@@ -17,17 +18,18 @@ public class SnakeClient extends Snake implements Runnable {
     private CommandSwitch commandSwitch;
     private boolean isCloseRoom = false;
     private boolean stop = false;
+    private Thread thread;
 
-    public SnakeClient(LinkedList<Vector2> snake, DataTransfer dataTransfer) {
-        super(snake, Config.RED, "client");
+    public SnakeClient(LinkedList<Vector2> snake, DataTransfer dataTransfer, Menu menu) {
+        super(snake, Config.RED, menu);
         this.dataTransfer = dataTransfer;
         this.moveController = "";
-
 
         this.commandSwitch = new CommandSwitch();
         commandSwitch.register("GetFrame", new GetFrame(dataTransfer, this));
         commandSwitch.register("SetDirection", new SetDirection(this));
         commandSwitch.register("CloseRoom", new CloseRoom(this));
+        thread = new Thread(this);
     }
 
     @Override
@@ -61,6 +63,11 @@ public class SnakeClient extends Snake implements Runnable {
     public void close() {
         dataTransfer = null;
         isCloseRoom = true;
+    }
+
+    @Override
+    public Thread getThread() {
+        return thread;
     }
 
     public boolean isStop() {

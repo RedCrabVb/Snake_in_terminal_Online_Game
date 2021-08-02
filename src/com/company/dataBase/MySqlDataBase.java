@@ -31,12 +31,12 @@ public class MySqlDataBase implements DataBase {
             boolean isFound = false;
             while (resultSet.next()) {
                 isFound = true;
-                String passwordDB = resultSet.getString(2);
+                String passwordDB = resultSet.getString(3);
                 if (!passwordDB.equals(password)) {
                     return false;
                 }
             }
-            if (isFound) {
+            if (!isFound) {
                 createAccount(username, password);
             }
             return true;
@@ -53,7 +53,7 @@ public class MySqlDataBase implements DataBase {
             PreparedStatement st = connects.prepareStatement(query);
             st.setString(1, username);
             st.setString(2, password.toLowerCase(Locale.ROOT));
-            st.executeUpdate();
+            st.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,20 +62,19 @@ public class MySqlDataBase implements DataBase {
     @Override
     public String getRecorde() {
         try {
-            String query = "select * from Records;";
+            String query = "SELECT username, snakesize FROM Records ORDER BY snakesize DESC LIMIT 5;";
             PreparedStatement st = connects.prepareStatement(query);
             ResultSet rs = st.executeQuery();
 
-            ResultSetMetaData rsMeta = rs.getMetaData();
-            int columnCount = rsMeta.getColumnCount();
+            String result = "";
 
-            rs.next();
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName = rsMeta.getColumnName(i);
-                System.out.format("%s:%s\n", columnName, rs.getString(i));
+            result += "\n________\n";
+            while (rs.next()) {
+                result += String.format("User name: %s, snake size: %s\n", rs.getString("username"), rs.getString("snakesize"));
             }
+            result += "________\n";
 
-            return "";
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             return "";

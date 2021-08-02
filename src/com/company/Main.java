@@ -2,6 +2,7 @@ package com.company;
 
 import com.company.client.DataTransferG;
 import com.company.client.SnakeClientG;
+import com.company.dataBase.DataBase;
 import com.company.server.Room;
 import com.company.server.menu.MenuClient;
 import com.company.server.menu.MenuServer;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
     private static List<Room> rooms = new ArrayList();
+    public static DataBase dataBase;
 
     public static String getListRooms() {
         var ref = new Object() {

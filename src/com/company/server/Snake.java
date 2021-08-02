@@ -2,6 +2,7 @@ package com.company.server;
 
 import com.company.Controller;
 import com.company.Vector2;
+import com.company.server.menu.Menu;
 
 import java.util.LinkedList;
 
@@ -11,13 +12,15 @@ public abstract class Snake {
     private String frame = "";
     private String color;
     private String name;
+    private Menu menu;
 
     private Controller controller = Controller.up;
 
-    public Snake(LinkedList<Vector2> snake, String color, String name) {
-        this.name = name;
+    public Snake(LinkedList<Vector2> snake, String color, Menu menu) {
+        this.name = menu.getUsername();
         this.color = color;
         this.snake = snake;
+        this.menu = menu;
     }
 
     public Vector2 getVector2() {
@@ -73,7 +76,13 @@ public abstract class Snake {
         return color;
     }
 
+    public abstract Thread getThread();
+
     public String getName() {
         return name;
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 }

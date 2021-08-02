@@ -22,6 +22,11 @@ public class MenuClient extends Menu implements Runnable {
     }
 
     @Override
+    public String getUsername() {
+        return "client";
+    }
+
+    @Override
     public synchronized void run() {
         while (!Thread.currentThread().isInterrupted()) {
             if (isRunMenu()) {

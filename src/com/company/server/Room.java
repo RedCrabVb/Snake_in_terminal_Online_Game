@@ -15,8 +15,6 @@ public class Room extends Thread {
     private String frame;
     private final String[][] map;
     private final List<Snake> snakeList;
-    private final List<Menu> menus;
-    private final List<Thread> snakeThreadList;
 
     private int startPosition = 15;
     private final String nameRoom;
@@ -25,9 +23,7 @@ public class Room extends Thread {
         this.nameRoom = nameRoom;
         frame = "";
         map = new String[Config.X_SIZE][Config.Y_SIZE];
-        snakeThreadList = new ArrayList<>();
         snakeList = new ArrayList<>();
-        menus = new ArrayList<>();
     }
 
     public void addUser(DataTransfer dataTransfer, Menu menu) {
@@ -37,10 +33,8 @@ public class Room extends Thread {
                 new Vector2(startPosition, 17),
                 new Vector2(startPosition, 18)));
         startPosition += 3;
-        SnakeClient snakeClient = new SnakeClient(snake, dataTransfer);
+        SnakeClient snakeClient = new SnakeClient(snake, dataTransfer, menu);
         snakeList.add(snakeClient);
-        snakeThreadList.add(new Thread(snakeClient));
-        this.menus.add(menu);
         if (isReady()) {
             this.start();
         }
@@ -53,10 +47,8 @@ public class Room extends Thread {
                 new Vector2(startPosition, 17),
                 new Vector2(startPosition, 18)));
         startPosition += 3;
-        SnakeServer server = new SnakeServer(snake);
+        SnakeServer server = new SnakeServer(snake, menu);
         snakeList.add(server);
-        snakeThreadList.add(new Thread(server));
-        this.menus.add(menu);
         if (isReady()) {
             this.start();
         }
@@ -65,21 +57,30 @@ public class Room extends Thread {
     @Override
     public void run() {
         createWall();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 300; i++) {
             foodSpawn();
         }
 
-        snakeThreadList.forEach(Thread::start);
+        snakeList.forEach(s -> s.getThread().start());
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(Config.threadRestTime);
 
-                frame = createFrame();
+                frame = createFrame(map);
 
+/*
                 snakeList.forEach(snake -> {
                     snake.updateFrame(frame);
-                    move(snake.getVector2(), snake.getSnake());
+                    move(snake.getVector2(), snake.getSnake(), snake);
                 });
+*/
+
+                int sizeListSnake = snakeList.size();
+                for (int i = 0; i < sizeListSnake; i++) {
+                    Snake snake = snakeList.get(i);
+                    snake.updateFrame(frame);
+                    move(snake.getVector2(), snake.getSnake(), snake);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -107,7 +108,7 @@ public class Room extends Thread {
         map[v.getX()][v.getY()] = Config.snakeHead;
     }
 
-    public String createFrame() {
+    public String createFrame(String[][] map) {
         snakeList.forEach(s -> printSnake(s.getSnake(), s.getColor() + Config.snakeBody + Config.RESET));
 
         var ref = new Object() {
@@ -135,8 +136,7 @@ public class Room extends Thread {
             spawnFood = !(x == 0 || y == 0 || x >= (Config.X_SIZE - 1) || y >= (Config.Y_SIZE - 1));
 
             List<Vector2> snakeList = new LinkedList<>();
-            snakeList.addAll(this.snakeList.get(0).getSnake());
-            snakeList.addAll(this.snakeList.get(1).getSnake());
+            this.snakeList.forEach(s -> snakeList.addAll(s.getSnake()));
             for (var v : snakeList) {
                 if (x == v.getX() && y == v.getY()) {
                     spawnFood = false;
@@ -148,57 +148,56 @@ public class Room extends Thread {
         map[x][y] = Config.food;
     }
 
-    private void move(Vector2 move, LinkedList<Vector2> snake) {
-        snake.addFirst(move);
-        hitTheObject(snake);
-        if (map[snake.get(0).getX()][snake.get(0).getY()].equals(Config.food)) {
-            snake.addFirst(move);
+    private void move(Vector2 move, LinkedList<Vector2> snakeList, Snake snake) {
+        snakeList.addFirst(move);
+        hitTheObject(snakeList, snake);
+        if (map[snakeList.get(0).getX()][snakeList.get(0).getY()].equals(Config.food)) {
+            snakeList.addFirst(move);
             foodSpawn();
         }
-        remove(snake);
+        remove(snakeList);
     }
 
-    private void gameOver() {
+    private void gameOver(Snake snake) throws InterruptedException {
+        String[][] map2 = map.clone();
+
         var ref = new Object() {
             Integer f = 15;
         };
         Arrays.asList("Game over").forEach(c -> {
             ref.f = ref.f + 1;
-            map[Math.round(Config.X_SIZE / 2)][ref.f] = c;
+            map2[Math.round(Config.X_SIZE / 2)][ref.f] = c;
         });
 
-        frame = createFrame();
-        snakeList.forEach(s -> s.updateFrame(frame));
+        String frame2 = createFrame(map2);
+        snake.updateFrame(frame2);
+        Thread.sleep(3000);
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        Main.dataBase.addRecorde(snake.getName(), snake.getSnake().size());
+        snake.close();
+
+        Thread.sleep(7000);
+
+        synchronized (snake.getMenu()) {
+            snake.getMenu().notifyAll();
         }
 
-        snakeList.forEach(Snake::close);
-
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        snake.getThread().interrupt();
+        snakeList.remove(snake);
+        if (snakeList.size() < 1) {
+            Main.removeRoom(this);
+            this.interrupt();
         }
-
-        snakeThreadList.forEach(t -> t.interrupt());
-        for (var m : menus) {
-            synchronized (m) {
-                m.notifyAll();
-            }
-        }
-        Main.removeRoom(this);
-
-        this.interrupt();
     }
 
-    private void hitTheObject(LinkedList<Vector2> snake) {
-        String _map = map[snake.get(0).getX()][snake.get(0).getY()];
+    private void hitTheObject(LinkedList<Vector2> snakeList, Snake snake) {
+        String _map = map[snakeList.get(0).getX()][snakeList.get(0).getY()];
         if (_map.contains(Config.wall) || _map.contains(Config.snakeBody)) {
-            gameOver();
+            try {
+                gameOver(snake);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

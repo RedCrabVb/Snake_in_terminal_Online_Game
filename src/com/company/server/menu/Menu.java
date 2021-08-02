@@ -1,6 +1,6 @@
 package com.company.server.menu;
 
-public class Menu {
+public abstract class Menu {
     private boolean isRunMenu = true;
 
     public void startMenu() {
@@ -14,4 +14,6 @@ public class Menu {
     public boolean isRunMenu() {
         return isRunMenu;
     }
+
+    public abstract String getUsername();
 }

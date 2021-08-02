@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 public class MenuServer extends Menu implements Runnable {
     private final List<Room> rooms;
+    private String username;
 
     public MenuServer(List<Room> rooms) {
         this.rooms = rooms;
@@ -26,26 +27,29 @@ public class MenuServer extends Menu implements Runnable {
                 "if it exists and the password is wrong, " +
                 "then there will be an error during registration");
         System.out.print("Username: ");
-        String userName = scanner.nextLine();
+        username = scanner.nextLine();
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
+        Main.dataBase = null;
         try {
-            DataBase dataBase = new MySqlDataBase(
+            Main.dataBase = new MySqlDataBase(
                     "localhost",
                     "3306",
                     "SnakeDB",
                     "username",
                     "password");
-            if (!dataBase.isRealAccount(userName, password)) {
+
+            if (!Main.dataBase.isRealAccount(username, password)) {
                 System.out.println("False data");
+                System.exit(0);
             }
 
-            dataBase.getRecorde();
-            dataBase.addRecorde("test", 3);
         } catch (SQLException e) {
             e.printStackTrace();
+            System.exit(-1);
         }
+
 
         while (!Thread.currentThread().isInterrupted()) {
             if (isRunMenu()) {
@@ -53,7 +57,7 @@ public class MenuServer extends Menu implements Runnable {
                 System.out.println("1. Show list rooms");
                 System.out.println("2. Connection to rooms");
                 System.out.println("3. Create rooms");
-                System.out.println("3. Users recorde");
+                System.out.println("4. Users recorde");
 
                 try {
                     String inputData = scanner.nextLine();
@@ -76,6 +80,9 @@ public class MenuServer extends Menu implements Runnable {
                             System.out.print("Enter name rooms: ");
                             rooms.add(new Room(scanner.nextLine()));
                             break;
+                        case "4":
+                            System.out.println(Main.dataBase.getRecorde());
+                            break;
                         default:
                             System.out.println("Error enter data");
                             break;
@@ -93,5 +100,9 @@ public class MenuServer extends Menu implements Runnable {
                 System.out.println("false run menu server");
             }
         }
+    }
+
+    public String getUsername() {
+        return username;
     }
 }
