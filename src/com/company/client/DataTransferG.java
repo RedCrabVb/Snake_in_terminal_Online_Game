@@ -63,4 +63,17 @@ public class DataTransferG {
         json.addProperty(nameField, data);
         sendMessage(json.toString());
     }
+
+    public boolean registration(String username, String password) throws IOException {
+        JsonObject json = new JsonObject();
+        json.addProperty("username", username);
+        json.addProperty("password", password);
+        sendMessage(json.toString());
+        return getMessage().get("access").getAsBoolean();
+    }
+
+    public String getRecords() throws IOException {
+        sendCommand("ShowRecords");
+        return getMessage().get("showRecords").getAsString();
+    }
 }

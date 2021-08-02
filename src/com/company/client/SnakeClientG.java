@@ -18,10 +18,35 @@ public class SnakeClientG extends Thread {
     public void run() {
         Scanner scanner = new Scanner(System.in);
 
+        System.out.println("Enter your username and password, " +
+                "if a user with this name does not exist, " +
+                "then it will be created, " +
+                "if it exists and the password is wrong, " +
+                "then there will be an error during registration");
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
+        boolean result = false;
+        try {
+            result = dataTransfer.registration(username, password);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (!result) {
+            System.out.println("False input data");
+            System.exit(0);
+        }
+
+
         while (true) {
             System.out.println("Enter menu item");
             System.out.println("1. Show list rooms");
             System.out.println("2. Connection to rooms");
+            System.out.println("3. Create rooms");
+            System.out.println("4. Users recorde");
             String inputData = scanner.nextLine();
             switch (inputData) {
                 case "1":
@@ -64,6 +89,22 @@ public class SnakeClientG extends Thread {
                         Thread.sleep(4000);
 
                     } catch (IOException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "3":
+                    System.out.println("Enter name room");
+                    String nameRoom = scanner.nextLine();
+                    try {
+                        dataTransfer.sendCommand("CreateRoom", nameRoom, "nameRoom");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "4":
+                    try {
+                        System.out.println(dataTransfer.getRecords());
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                     break;

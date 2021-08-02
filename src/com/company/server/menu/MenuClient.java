@@ -1,10 +1,11 @@
 package com.company.server.menu;
 
 import com.company.DataTransfer;
+import com.company.Main;
 import com.company.server.Room;
-import com.company.server.command.CommandSwitch;
-import com.company.server.command.ConnectionToRoom;
-import com.company.server.command.GetRoomList;
+import com.company.server.command.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -13,21 +14,39 @@ import java.util.List;
 public class MenuClient extends Menu implements Runnable {
     private volatile DataTransfer dataTransfer;
     private CommandSwitch commandSwitch;
+    private String username;
 
     public MenuClient(DataTransfer dataTransfer, List<Room> roomList) {
         this.dataTransfer = dataTransfer;
         this.commandSwitch = new CommandSwitch();
         this.commandSwitch.register("GetRoom", new GetRoomList(dataTransfer));
         this.commandSwitch.register("ConnectionToRoom", new ConnectionToRoom(dataTransfer, roomList, this));
+        this.commandSwitch.register("CreateRoom", new CreateRoom(roomList));
+        this.commandSwitch.register("ShowRecords", new ShowRecords(dataTransfer));
     }
 
     @Override
     public String getUsername() {
-        return "client";
+        return username;
     }
 
     @Override
     public synchronized void run() {
+        try {
+            JsonObject regJson = JsonParser.parseString(dataTransfer.getMessage()).getAsJsonObject();
+            username = regJson.get("username").getAsString();
+            boolean reg = Main.dataBase.isRealAccount(username, regJson.get("password").getAsString());
+            JsonObject jsonAnswer = new JsonObject();
+            jsonAnswer.addProperty("access", reg);
+            dataTransfer.sendMessage(jsonAnswer.toString());
+            if (!reg) {
+                return;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         while (!Thread.currentThread().isInterrupted()) {
             if (isRunMenu()) {
                 try {
