@@ -21,7 +21,11 @@ public class ConnectionToRoom implements Command {
     @Override
     public void execute(JsonObject json) {
         int numberRoom = json.get("numberRoom").getAsInt() - 1;
-        roomList.get(numberRoom).addUser(dataTransfer, menuClient);
-        menuClient.stopMenu();
+        try {
+            roomList.get(numberRoom).addUser(dataTransfer, menuClient);
+            menuClient.stopMenu();
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
     }
 }

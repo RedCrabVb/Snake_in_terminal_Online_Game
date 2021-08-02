@@ -4,9 +4,9 @@ import java.io.*;
 import java.net.Socket;
 
 public class DataTransfer {
-    private volatile Socket socket;
-    private volatile DataInput in;
-    private volatile DataOutput out;
+    private Socket socket;
+    private DataInput in;
+    private DataOutput out;
 
     public DataTransfer(Socket socket) throws IOException {
         this.socket = socket;
@@ -23,17 +23,5 @@ public class DataTransfer {
         String msg = in.readUTF();
         System.out.println(msg);
         return msg;
-    }
-
-    public void close() {
-        try {
-            socket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean isClose() {
-        return socket.isClosed();
     }
 }

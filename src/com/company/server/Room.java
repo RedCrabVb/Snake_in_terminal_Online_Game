@@ -177,6 +177,13 @@ public class Room extends Thread {
         }
 
         snakeList.forEach(Snake::close);
+
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         snakeThreadList.forEach(t -> t.interrupt());
         for (var m : menus) {
             synchronized (m) {
@@ -184,6 +191,7 @@ public class Room extends Thread {
             }
         }
         Main.removeRoom(this);
+
         this.interrupt();
     }
 

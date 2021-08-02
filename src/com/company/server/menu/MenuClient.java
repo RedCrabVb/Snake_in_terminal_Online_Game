@@ -6,6 +6,7 @@ import com.company.server.command.CommandSwitch;
 import com.company.server.command.ConnectionToRoom;
 import com.company.server.command.GetRoomList;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,9 +27,12 @@ public class MenuClient extends Menu implements Runnable {
             if (isRunMenu()) {
                 try {
                     commandSwitch.execute(dataTransfer.getMessage());
-                } catch (IOException e) {
+                } catch (EOFException e) {
                     e.printStackTrace();
                     break;
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
                 }
             } else {
                 try {

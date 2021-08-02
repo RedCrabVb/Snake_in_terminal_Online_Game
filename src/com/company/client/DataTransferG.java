@@ -9,7 +9,7 @@ import java.net.Socket;
 public class DataTransferG {
     private Socket socket;
     private DataInput in;
-    private DataOutputStream out;
+    private DataOutput out;
 
     public DataTransferG(Socket socket) throws IOException {
         this.socket = socket;
@@ -19,8 +19,8 @@ public class DataTransferG {
     }
 
     public void sendMessage(String msg) throws IOException {
+        System.out.println(msg);
         out.writeUTF(msg);
-        out.flush();
     }
 
     public JsonObject getMessage() throws IOException {
@@ -61,17 +61,5 @@ public class DataTransferG {
         json.addProperty("header", command);
         json.addProperty(nameField, data);
         sendMessage(json.toString());
-    }
-
-    public void close() {
-        try {
-            socket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean isClose() {
-        return socket.isClosed();
     }
 }

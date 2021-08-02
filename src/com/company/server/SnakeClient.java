@@ -16,6 +16,7 @@ public class SnakeClient extends Snake implements Runnable {
     private String moveController;
     private CommandSwitch commandSwitch;
     private boolean isCloseRoom = false;
+    private boolean stop = false;
 
     public SnakeClient(LinkedList<Vector2> snake, DataTransfer dataTransfer) {
         super(snake, Config.RED, "client");
@@ -37,12 +38,13 @@ public class SnakeClient extends Snake implements Runnable {
             } catch (IllegalStateException e) {
                 System.out.println(e.getMessage());
             } catch (EOFException e) {
-//                break;
+                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
-//                break;
             }
         }
+
+        stop = true;
     }
 
     public void setMoveController(String moveController) {
@@ -57,6 +59,11 @@ public class SnakeClient extends Snake implements Runnable {
 
     @Override
     public void close() {
+        dataTransfer = null;
         isCloseRoom = true;
+    }
+
+    public boolean isStop() {
+        return stop;
     }
 }

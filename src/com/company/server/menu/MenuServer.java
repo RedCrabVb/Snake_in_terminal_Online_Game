@@ -33,8 +33,12 @@ public class MenuServer extends Menu implements Runnable {
                         case "2":
                             System.out.println("Enter number rooms");
                             int numberRoom = Integer.parseInt(scanner.nextLine()) - 1;
-                            stopMenu();
-                            rooms.get(numberRoom).addUser(this);
+                            try {
+                                rooms.get(numberRoom).addUser(this);
+                                stopMenu();
+                            } catch (IndexOutOfBoundsException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         case "3":
                             System.out.print("Enter name rooms: ");

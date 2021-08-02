@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class SnakeClientG extends Thread {
-    private String frame = "";
-    private DataTransferG dataTransfer;
-    private String control = "a";
-    private boolean gameIsActive = false;
+    private volatile String frame = "";
+    private volatile DataTransferG dataTransfer;
+    private volatile String control = "a";
+    private volatile boolean gameIsActive = false;
 
     private Thread print;
 
@@ -38,21 +38,26 @@ public class SnakeClientG extends Thread {
                         dataTransfer.connectionToRoom(numberRoom);
                         print = new Thread(new Print());
                         print.start();
+
                         gameIsActive = true;
 
                         while (gameIsActive) {
                             try {
                                 control = scanner.nextLine();
-                                move(control);
+                                if (gameIsActive) {
+                                    dataTransfer.sendForward(control);
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 break;
                             }
                         }
 
-                        dataTransfer.sendCommand("CloseRoom");
+                        dataTransfer.sendMessage("");
 
                         Thread.sleep(4000);
+
+//                        dataTransfer.sendCommand("CloseRoom");
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -62,7 +67,6 @@ public class SnakeClientG extends Thread {
                     break;
             }
         }
-
     }
 
     public SnakeClientG(DataTransferG dataTransfer) {
@@ -73,24 +77,20 @@ public class SnakeClientG extends Thread {
 
         @Override
         public void run() {
-            while (gameIsActive) {
-                try {
+            try {
+                while (gameIsActive) {
                     frame = dataTransfer.getFrame();
                     print();
                     if (frame.contains("Game over")) {
                         gameIsActive = false;
+                    } else {
+                        Thread.sleep(Config.threadRestTime);
                     }
-                    Thread.sleep(Config.threadRestTime);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-    }
-
-    private void move(String forward) throws Exception {
-        dataTransfer.sendForward(forward);
     }
 
     private void print() {
