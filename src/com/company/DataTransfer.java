@@ -15,11 +15,11 @@ public class DataTransfer {
         out = new DataOutputStream(socket.getOutputStream());
     }
 
-    public void sendMessage(String msg) throws IOException {
+    public synchronized void sendMessage(String msg) throws IOException {
         out.writeUTF(msg);
     }
 
-    public String getMessage() throws IOException {
+    public synchronized String getMessage() throws IOException {
         String msg = in.readUTF();
         System.out.println(msg);
         return msg;

@@ -68,13 +68,6 @@ public class Room extends Thread {
 
                 frame = createFrame(map);
 
-/*
-                snakeList.forEach(snake -> {
-                    snake.updateFrame(frame);
-                    move(snake.getVector2(), snake.getSnake(), snake);
-                });
-*/
-
                 int sizeListSnake = snakeList.size();
                 for (int i = 0; i < sizeListSnake; i++) {
                     Snake snake = snakeList.get(i);
@@ -171,18 +164,16 @@ public class Room extends Thread {
 
         String frame2 = createFrame(map2);
         snake.updateFrame(frame2);
-        Thread.sleep(3000);
 
         Main.dataBase.addRecorde(snake.getName(), snake.getSnake().size());
         snake.close();
 
-        Thread.sleep(7000);
+        Thread.sleep(1000);
 
         synchronized (snake.getMenu()) {
             snake.getMenu().notifyAll();
         }
 
-        snake.getThread().interrupt();
         snakeList.remove(snake);
         if (snakeList.size() < 1) {
             Main.removeRoom(this);

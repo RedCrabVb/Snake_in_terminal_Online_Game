@@ -18,13 +18,12 @@ public class DataTransferG {
         out = new DataOutputStream(socket.getOutputStream());
     }
 
-    public void sendMessage(String msg) throws IOException {
+    public synchronized void sendMessage(String msg) throws IOException {
         System.out.println(msg);
         out.writeUTF(msg);
-        socket.getOutputStream().flush();
     }
 
-    public JsonObject getMessage() throws IOException {
+    public synchronized JsonObject getMessage() throws IOException {
         return JsonParser.parseString(in.readUTF()).getAsJsonObject();
     }
 

@@ -47,20 +47,17 @@ public class SnakeClientG extends Thread {
             System.out.println("2. Connection to rooms");
             System.out.println("3. Create rooms");
             System.out.println("4. Users recorde");
-            String inputData = scanner.nextLine();
-            switch (inputData) {
-                case "1":
-                    try {
+            try {
+                String inputData = scanner.nextLine();
+                switch (inputData) {
+                    case "1":
                         System.out.println("get list room");
                         System.out.println(dataTransfer.getListRoom());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "2":
-                    System.out.println("Enter number room");
-                    int numberRoom = Integer.valueOf(scanner.nextLine());
-                    try {
+
+                        break;
+                    case "2":
+                        System.out.println("Enter number room");
+                        int numberRoom = Integer.valueOf(scanner.nextLine());
                         dataTransfer.connectionToRoom(numberRoom);
                         JsonObject json = dataTransfer.getMessage();
                         if (!json.get("access").getAsBoolean()) {
@@ -84,33 +81,23 @@ public class SnakeClientG extends Thread {
                             }
                         }
 
-                        dataTransfer.sendMessage("");
+                        Thread.sleep(1000);
 
-                        Thread.sleep(4000);
-
-                    } catch (IOException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "3":
-                    System.out.println("Enter name room");
-                    String nameRoom = scanner.nextLine();
-                    try {
+                        break;
+                    case "3":
+                        System.out.println("Enter name room");
+                        String nameRoom = scanner.nextLine();
                         dataTransfer.sendCommand("CreateRoom", nameRoom, "nameRoom");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "4":
-                    try {
-                        System.out.println(dataTransfer.getRecords());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                default:
-                    System.out.println("Error enter data");
-                    break;
+                        break;
+                    case "4":
+                            System.out.println(dataTransfer.getRecords());
+                        break;
+                    default:
+                        System.out.println("Error enter data");
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -130,7 +117,7 @@ public class SnakeClientG extends Thread {
                     if (frame.contains("Game over")) {
                         gameIsActive = false;
                     } else {
-                        Thread.sleep(Config.threadRestTime);
+                        Thread.sleep(Config.threadRestTime - Config.threadRestTime / 2);
                     }
                 }
             } catch (Exception e) {
