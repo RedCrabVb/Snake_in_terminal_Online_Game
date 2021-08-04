@@ -6,7 +6,7 @@ public enum Controller {
     up("a", "d"),
     down("d", "a");
 
-    private String key, opposite;
+    private final String key, opposite;
 
     Controller(String key, String opposite) {
         this.key = key;
@@ -17,7 +17,7 @@ public enum Controller {
         return key;
     }
 
-    public boolean isOpposite(Controller controller) {
-        return opposite.equals(controller.getKey());
+    public boolean isNotOpposite(Controller controller) {
+        return !opposite.equals(controller.getKey());
     }
 }

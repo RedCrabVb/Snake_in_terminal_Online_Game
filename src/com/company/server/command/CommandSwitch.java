@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandSwitch {
-    private Map<String, Command> map = new HashMap<>();
+    private final Map<String, Command> map = new HashMap<>();
 
     public void register(String commandName, Command command) {
         map.put(commandName, command);

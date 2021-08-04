@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import java.util.List;
 
 public class CreateRoom implements Command {
-    private List<Room> roomList;
+    private final List<Room> roomList;
 
     public CreateRoom(List<Room> roomList) {
         this.roomList = roomList;

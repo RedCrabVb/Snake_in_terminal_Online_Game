@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 
 public class ShowRecords implements Command {
-    private DataTransfer dataTransfer;
+    private final DataTransfer dataTransfer;
 
     public ShowRecords(DataTransfer dataTransfer) {
         this.dataTransfer = dataTransfer;

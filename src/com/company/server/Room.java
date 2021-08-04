@@ -6,10 +6,7 @@ import com.company.Main;
 import com.company.Vector2;
 import com.company.server.menu.Menu;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Room extends Thread {
     private String frame;
@@ -19,39 +16,36 @@ public class Room extends Thread {
     private int startPosition = 15;
     private final String nameRoom;
 
+    private LinkedList<Vector2> createSnake() {
+        LinkedList<Vector2> snake = new LinkedList<>(Arrays.asList(
+                new Vector2(startPosition, 15),
+                new Vector2(startPosition, 16),
+                new Vector2(startPosition, 17),
+                new Vector2(startPosition, 18)));
+        startPosition += 3;
+        return snake;
+    }
+
     public Room(String nameRoom) {
         this.nameRoom = nameRoom;
-        frame = "";
-        map = new String[Config.X_SIZE][Config.Y_SIZE];
-        snakeList = new ArrayList<>();
+        this.frame = "";
+        this.map = new String[Config.X_SIZE][Config.Y_SIZE];
+        this.snakeList = new ArrayList<>();
+        this.start();
     }
 
     public void addUser(DataTransfer dataTransfer, Menu menu) {
-        LinkedList<Vector2> snake = new LinkedList<>(Arrays.asList(
-                new Vector2(startPosition, 15),
-                new Vector2(startPosition, 16),
-                new Vector2(startPosition, 17),
-                new Vector2(startPosition, 18)));
-        startPosition += 3;
-        SnakeClient snakeClient = new SnakeClient(snake, dataTransfer, menu);
-        snakeList.add(snakeClient);
-        if (isReady()) {
-            this.start();
-        }
+        LinkedList<Vector2> snakeListVector = createSnake();
+        Snake snake = new SnakeClient(snakeListVector, dataTransfer, menu);
+        snakeList.add(snake);
+        snake.getThread().start();
     }
 
     public void addUser(Menu menu) {
-        LinkedList<Vector2> snake = new LinkedList<>(Arrays.asList(
-                new Vector2(startPosition, 15),
-                new Vector2(startPosition, 16),
-                new Vector2(startPosition, 17),
-                new Vector2(startPosition, 18)));
-        startPosition += 3;
-        SnakeServer server = new SnakeServer(snake, menu);
-        snakeList.add(server);
-        if (isReady()) {
-            this.start();
-        }
+        LinkedList<Vector2> snakeListVector = createSnake();
+        Snake snake = new SnakeServer(snakeListVector, menu);
+        snakeList.add(snake);
+        snake.getThread().start();
     }
 
     @Override
@@ -61,7 +55,6 @@ public class Room extends Thread {
             foodSpawn();
         }
 
-        snakeList.forEach(s -> s.getThread().start());
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(Config.threadRestTime);
@@ -70,9 +63,13 @@ public class Room extends Thread {
 
                 int sizeListSnake = snakeList.size();
                 for (int i = 0; i < sizeListSnake; i++) {
-                    Snake snake = snakeList.get(i);
-                    snake.updateFrame(frame);
-                    move(snake.getVector2(), snake.getSnake(), snake);
+                    try {
+                        Snake snake = snakeList.get(i);
+                        snake.updateFrame(frame);
+                        move(snake.getVector2(), snake.getSnake(), snake);
+                    } catch (IndexOutOfBoundsException e) {
+                        //Ignore
+                    }
                 }
 
             } catch (Exception e) {
@@ -97,7 +94,7 @@ public class Room extends Thread {
     public void printSnake(LinkedList<Vector2> snake, String body) {
         snake.forEach(v -> map[v.getX()][v.getY()] = body);
 
-        Vector2 v = snake.stream().findFirst().get();
+        Vector2 v = snake.stream().findFirst().orElse(new Vector2(0, 0));
         map[v.getX()][v.getY()] = Config.snakeHead;
     }
 
@@ -121,8 +118,10 @@ public class Room extends Thread {
 
     public void foodSpawn() {
         boolean spawnFood = false;
+        int i = 0;
+        int MAX_ATTEMPTS  = 10;
         int x = 0, y = 0;
-        while (!spawnFood) {
+        while (!spawnFood && i < MAX_ATTEMPTS) {
             x = (int) (Math.round(Math.random() * Config.X_SIZE));
             y = (int) (Math.round(Math.random() * Config.Y_SIZE));
 
@@ -136,9 +135,12 @@ public class Room extends Thread {
                     break;
                 }
             }
+            i++;
         }
 
-        map[x][y] = Config.food;
+        if (spawnFood) {
+            map[x][y] = Config.food;
+        }
     }
 
     private void move(Vector2 move, LinkedList<Vector2> snakeList, Snake snake) {
@@ -157,9 +159,9 @@ public class Room extends Thread {
         var ref = new Object() {
             Integer f = 15;
         };
-        Arrays.asList("Game over").forEach(c -> {
+        Collections.singletonList("Game over").forEach(c -> {
             ref.f = ref.f + 1;
-            map2[Math.round(Config.X_SIZE / 2)][ref.f] = c;
+            map2[Math.round(Math.round(Config.X_SIZE / 2))][ref.f] = c;
         });
 
         String frame2 = createFrame(map2);
@@ -200,9 +202,5 @@ public class Room extends Thread {
     @Override
     public String toString() {
         return String.format("%d/2 %s", snakeList.size(), nameRoom);
-    }
-
-    public boolean isReady() {
-        return snakeList.size() == 2;
     }
 }

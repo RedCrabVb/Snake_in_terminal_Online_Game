@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class SnakeServer extends Snake implements Runnable {
     private String moveController;
-    private Thread getInput;
-    private Thread thread;
+    private final Thread getInput;
+    private final Thread thread;
 
     public SnakeServer(LinkedList<Vector2> snake, Menu menu) {
         super(snake, Config.BLUE, menu);

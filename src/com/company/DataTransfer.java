@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class DataTransfer {
-    private Socket socket;
+    private final Socket socket;
     private DataInput in;
     private DataOutput out;
 

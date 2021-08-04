@@ -7,9 +7,9 @@ import java.io.*;
 import java.net.Socket;
 
 public class DataTransferG {
-    private Socket socket;
-    private DataInput in;
-    private DataOutput out;
+    private final Socket socket;
+    private final DataInput in;
+    private final DataOutput out;
 
     public DataTransferG(Socket socket) throws IOException {
         this.socket = socket;

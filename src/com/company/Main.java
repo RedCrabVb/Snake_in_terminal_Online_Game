@@ -8,7 +8,6 @@ import com.company.server.Room;
 import com.company.server.menu.MenuClient;
 import com.company.server.menu.MenuServer;
 import com.google.gson.Gson;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -22,37 +21,88 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class ConfigDB {
-    public String getServerName() {
-        return serverName;
+/*class SocketAcceptConnection implements Runnable {
+    private final int port;
+    private final List<Room> rooms;
+
+    SocketAcceptConnection(int port, List<Room> rooms) {
+        this.port = port;
+        this.rooms = rooms;
     }
 
-    public int getPort() {
-        return port;
+    @Override
+    public void run() {
+        try {
+            ServerSocket socket = new ServerSocket(port);
+
+            while (!Thread.currentThread().isInterrupted()) {
+                Socket socketClient = socket.accept();
+                new Thread(new MenuClient(new DataTransfer(socketClient), rooms)).start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}*/
+
+/*class ParseConfig {
+    static class ConfigDB {
+        private String serverName;
+        private int port;
+        private String nameDB;
+        private String username;
+        private String userPassword;
+
+        public String getServerName() {
+            return serverName;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public String getNameDB() {
+            return nameDB;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getUserPassword() {
+            return userPassword;
+        }
+
     }
 
-    public String getNameDB() {
-        return nameDB;
+
+    private static String fileToString(String path) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, StandardCharsets.UTF_8);
     }
 
-    public String getUsername() {
-        return username;
-    }
+    public static DataBase createDataBase(String[] args) throws SQLException, IOException {
+        String nameConfigPath = "config.json";
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-config")) {
+                nameConfigPath = args[i + 1];
+            }
+        }
 
-    public String getUserPassword() {
-        return userPassword;
-    }
+        ConfigDB configDB = new Gson().fromJson(fileToString(nameConfigPath), ConfigDB.class);
 
-    private String serverName;
-    private int port;
-    private String nameDB;
-    private String username;
-    private String userPassword;
-}
+        return new MySqlDataBase(
+                configDB.getServerName(),
+                String.valueOf(configDB.getPort()),
+                configDB.getNameDB(),
+                configDB.getUsername(),
+                configDB.getUserPassword());
+    }
+}*/
 
 public class Main {
-    private static List<Room> rooms = new ArrayList();
     public static DataBase dataBase;
+    private final static List<Room> rooms = new ArrayList<>();
 
     public static String getListRooms() {
         var ref = new Object() {
@@ -68,42 +118,16 @@ public class Main {
         rooms.remove(room);
     }
 
-    private static String fileToString(String path) throws Exception {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, StandardCharsets.UTF_8);
-    }
-
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter 1 or 2: \n 1) Create server \n 2) Connect server");
         String selection = scanner.nextLine();
         if (selection.equals("1")) {
-            String nameConfigPath = "configPath.json";
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].equals("-config")) {
-                    nameConfigPath = args[i + 1];
-                }
-            }
-
-            ConfigDB configDB = new Gson().fromJson(fileToString(nameConfigPath), ConfigDB.class);
-            Main.dataBase = new MySqlDataBase(
-                    configDB.getServerName(),
-                    String.valueOf(configDB.getPort()),
-                    configDB.getNameDB(),
-                    configDB.getUsername(),
-                    configDB.getUserPassword());
-            
+            Main.dataBase = ParseConfig.createDataBase(args);
             System.out.println("Enter port for program");
-            String port = scanner.nextLine();
-
+            int port = scanner.nextInt();
             new Thread(new MenuServer(rooms)).start();
-
-            ServerSocket socket = new ServerSocket(Integer.parseInt(port));
-            while (true) {
-                Socket socketClient = socket.accept();
-                new Thread(new MenuClient(new DataTransfer(socketClient), rooms)).start();
-            }
-
+            new Thread(new SocketAcceptConnection(port, rooms)).start();
         } else if (selection.equals("2")) {
             System.out.println("Enter ip server");
             String ip = "127.0.0.1";//scanner.nextLine();

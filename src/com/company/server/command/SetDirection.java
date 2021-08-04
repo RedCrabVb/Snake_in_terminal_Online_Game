@@ -4,7 +4,7 @@ import com.company.server.SnakeClient;
 import com.google.gson.JsonObject;
 
 public class SetDirection implements Command {
-    private SnakeClient snakeClient;
+    private final SnakeClient snakeClient;
 
     public SetDirection(SnakeClient snakeClient) {
         this.snakeClient = snakeClient;

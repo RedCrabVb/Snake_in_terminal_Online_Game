@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 
 public class GetFrame implements Command {
-    private DataTransfer dataTransfer;
-    private SnakeClient snakeClient;
+    private final DataTransfer dataTransfer;
+    private final SnakeClient snakeClient;
 
     public GetFrame(DataTransfer dataTransfer, SnakeClient snakeClient) {
         this.dataTransfer = dataTransfer;

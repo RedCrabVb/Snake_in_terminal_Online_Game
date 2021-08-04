@@ -3,8 +3,9 @@
     <output-path>$PROJECT_DIR$/out/artifacts/Snake_in_terminal_Online_Game_jar</output-path>
     <root id="archive" name="Snake_in_terminal_Online_Game.jar">
       <element id="module-output" name="Snake_in_terminal_Online_Game" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/usr/share/java/mysql-connector-java-8.0.26.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.7/gson-2.8.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.18/lombok-1.18.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/usr/share/java/mysql-connector-java-8.0.26.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

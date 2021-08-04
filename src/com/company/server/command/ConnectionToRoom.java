@@ -5,13 +5,12 @@ import com.company.server.Room;
 import com.company.server.menu.MenuClient;
 import com.google.gson.JsonObject;
 
-import java.io.IOException;
 import java.util.List;
 
 public class ConnectionToRoom implements Command {
-    private DataTransfer dataTransfer;
-    private List<Room> roomList;
-    private MenuClient menuClient;
+    private final DataTransfer dataTransfer;
+    private final List<Room> roomList;
+    private final MenuClient menuClient;
 
     public ConnectionToRoom(DataTransfer dataTransfer, List<Room> roomList, MenuClient menuClient) {
         this.dataTransfer = dataTransfer;

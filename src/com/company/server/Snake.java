@@ -40,13 +40,13 @@ public abstract class Snake {
     }
 
     public void getDirectionsFromKeyboard(String forward, Vector2 headSnake) {
-        if (forward.contains(Controller.left.getKey()) && !controller.isOpposite(Controller.left)) {
+        if (forward.contains(Controller.left.getKey()) && controller.isNotOpposite(Controller.left)) {
             controller = Controller.left;
-        } else if (forward.contains(Controller.right.getKey()) && !controller.isOpposite(Controller.right)) {
+        } else if (forward.contains(Controller.right.getKey()) && controller.isNotOpposite(Controller.right)) {
             controller = Controller.right;
-        } else if (forward.contains(Controller.up.getKey()) && !controller.isOpposite(Controller.up)) {
+        } else if (forward.contains(Controller.up.getKey()) && controller.isNotOpposite(Controller.up)) {
             controller = Controller.up;
-        } else if (forward.contains(Controller.down.getKey()) && !controller.isOpposite(Controller.down)) {
+        } else if (forward.contains(Controller.down.getKey()) && controller.isNotOpposite(Controller.down)) {
             controller = Controller.down;
         }
 

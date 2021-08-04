@@ -1,11 +1,8 @@
 package com.company.server.menu;
 
 import com.company.Main;
-import com.company.dataBase.DataBase;
-import com.company.dataBase.MySqlDataBase;
 import com.company.server.Room;
 
-import java.sql.SQLException;
 import java.util.*;
 import java.util.Scanner;
 

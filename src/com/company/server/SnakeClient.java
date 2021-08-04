@@ -15,10 +15,9 @@ import java.util.LinkedList;
 public class SnakeClient extends Snake implements Runnable {
     private volatile DataTransfer dataTransfer;
     private String moveController;
-    private CommandSwitch commandSwitch;
+    private final CommandSwitch commandSwitch;
     private boolean isCloseRoom = false;
-    private boolean stop = false;
-    private Thread thread;
+    private final Thread thread;
 
     public SnakeClient(LinkedList<Vector2> snake, DataTransfer dataTransfer, Menu menu) {
         super(snake, Config.RED, menu);
@@ -26,10 +25,10 @@ public class SnakeClient extends Snake implements Runnable {
         this.moveController = "";
 
         this.commandSwitch = new CommandSwitch();
-        commandSwitch.register("GetFrame", new GetFrame(dataTransfer, this));
-        commandSwitch.register("SetDirection", new SetDirection(this));
-        commandSwitch.register("CloseRoom", new CloseRoom(this));
-        thread = new Thread(this);
+        this.commandSwitch.register("GetFrame", new GetFrame(dataTransfer, this));
+        this.commandSwitch.register("SetDirection", new SetDirection(this));
+        this.commandSwitch.register("CloseRoom", new CloseRoom(this));
+        this.thread = new Thread(this);
     }
 
     @Override
@@ -45,8 +44,6 @@ public class SnakeClient extends Snake implements Runnable {
                 e.printStackTrace();
             }
         }
-
-        stop = true;
     }
 
     public void setMoveController(String moveController) {
@@ -68,9 +65,5 @@ public class SnakeClient extends Snake implements Runnable {
     @Override
     public Thread getThread() {
         return thread;
-    }
-
-    public boolean isStop() {
-        return stop;
     }
 }

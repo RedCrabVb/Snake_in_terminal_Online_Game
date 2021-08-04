@@ -4,7 +4,7 @@ import com.company.server.SnakeClient;
 import com.google.gson.JsonObject;
 
 public class CloseRoom implements Command {
-    private SnakeClient snakeClient;
+    private final SnakeClient snakeClient;
 
     public CloseRoom(SnakeClient snakeClient) {
         this.snakeClient = snakeClient;

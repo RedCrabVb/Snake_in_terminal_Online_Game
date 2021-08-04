@@ -5,10 +5,9 @@ import com.company.Main;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
-import java.util.List;
 
 public class GetRoomList implements Command {
-    private DataTransfer dataTransfer;
+    private final DataTransfer dataTransfer;
 
     public GetRoomList(DataTransfer dataTransfer) {
         this.dataTransfer = dataTransfer;

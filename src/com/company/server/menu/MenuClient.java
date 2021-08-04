@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MenuClient extends Menu implements Runnable {
     private volatile DataTransfer dataTransfer;
-    private CommandSwitch commandSwitch;
+    private final CommandSwitch commandSwitch;
     private String username;
 
     public MenuClient(DataTransfer dataTransfer, List<Room> roomList) {

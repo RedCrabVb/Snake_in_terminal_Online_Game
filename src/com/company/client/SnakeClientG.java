@@ -12,8 +12,6 @@ public class SnakeClientG extends Thread {
     private volatile String control = "a";
     private volatile boolean gameIsActive = false;
 
-    private Thread print;
-
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -57,15 +55,15 @@ public class SnakeClientG extends Thread {
                         break;
                     case "2":
                         System.out.println("Enter number room");
-                        int numberRoom = Integer.valueOf(scanner.nextLine());
+                        int numberRoom = scanner.nextInt();
                         dataTransfer.connectionToRoom(numberRoom);
                         JsonObject json = dataTransfer.getMessage();
                         if (!json.get("access").getAsBoolean()) {
                             System.out.println("Cant connection to room");
                             continue;
                         }
-                        print = new Thread(new Print());
-                        print.start();
+
+                        new Thread(new Print()).start();
 
                         gameIsActive = true;
 
