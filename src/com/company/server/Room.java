@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Room extends Thread {
     private String frame;
-    private final String[][] map;
+    private String[][] map;
     private final List<Snake> snakeList;
 
     private int startPosition = 15;
@@ -31,18 +31,20 @@ public class Room extends Thread {
         this.start();
     }
 
-    public void addUser(DataTransfer dataTransfer, Performance menu) {
+    public void addUser(DataTransfer dataTransfer, Performance menu) throws InterruptedException {
         LinkedList<Vector2> snakeListVector = createSnake();
         Snake snake = new SnakeClient(snakeListVector, dataTransfer, menu);
         snakeList.add(snake);
         snake.getThread().start();
+//        menu.wait();
     }
 
-    public void addUser(Performance menu) {
+    public void addUser(Performance menu) throws InterruptedException {
         LinkedList<Vector2> snakeListVector = createSnake();
         Snake snake = new SnakeServer(snakeListVector, menu);
         snakeList.add(snake);
         snake.getThread().start();
+//        menu.wait();
     }
 
     @Override
@@ -170,7 +172,7 @@ public class Room extends Thread {
         Thread.sleep(1000);
 
         synchronized (snake.getMenu()) {
-            snake.getMenu().notifyAll();
+            snake.getMenu().runMenu();
         }
 
         snakeList.remove(snake);

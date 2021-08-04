@@ -20,7 +20,7 @@ public class SocketAcceptConnection implements Runnable {
         this.port = port;
     }
 
-    public static String getListRooms() {
+    public synchronized static String getListRooms() {
         var ref = new Object() {
             String print = "";
         };
@@ -30,16 +30,20 @@ public class SocketAcceptConnection implements Runnable {
         return ref.print;
     }
 
-    public static void addRooms(String nameRoom) {
+    public synchronized static void addRooms(String nameRoom) {
         rooms.add(new Room(nameRoom));
     }
 
-    public static void removeRooms(Room room) {
+    public synchronized static void removeRooms(Room room) {
         rooms.remove(room);
     }
 
-    public static void addUserToRoom(int numberRoom, Performance menu) {
-        rooms.get(numberRoom).addUser(menu);
+    public synchronized static void addUserToRoom(int numberRoom, Performance menu) {
+        try {
+            rooms.get(numberRoom).addUser(menu);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

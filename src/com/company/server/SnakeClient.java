@@ -40,6 +40,7 @@ public class SnakeClient extends Snake implements Runnable {
                 System.out.println(e.getMessage());
             } catch (EOFException e) {
                 e.printStackTrace();
+                break;
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -9,13 +9,13 @@ import java.util.Scanner;
 public interface UI {
     void showAllRooms();
 
-    void connectionToRooms(int number);
+    void connectionToRooms(int number, Performance performance);
 
     void createRoom(String nameRoom);
 
     void showRecorde();
 
-    void createServer(int port, List<Room> rooms);
+    void createServer(int port);
 
     void connectionServer(String ip, int port) throws IOException;
 }

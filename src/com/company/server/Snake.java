@@ -7,13 +7,12 @@ import com.company.server.menu.Performance;
 import java.util.LinkedList;
 
 public abstract class Snake {
+    private final LinkedList<Vector2> snake;
+    private final String color;
+    private final String name;
+    private final Performance menu;
     private Vector2 vector2;
-    private LinkedList<Vector2> snake;
     private String frame = "";
-    private String color;
-    private String name;
-    private Performance menu;
-
     private Controller controller = Controller.up;
 
     public Snake(LinkedList<Vector2> snake, String color, Performance menu) {

@@ -26,6 +26,11 @@ public class PerformanceClient implements Runnable, Performance {
     }
 
     @Override
+    public void runMenu() {
+//        consoleUI.notifyAll();
+    }
+
+    @Override
     public String getUsername() {
         return username;
     }

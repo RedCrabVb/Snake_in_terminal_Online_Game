@@ -24,7 +24,9 @@ public class ConnectionToRoom implements Command {
         try {
             try {
                 roomList.get(numberRoom).addUser(dataTransfer, menuClient);
-                menuClient.stopMenu();
+                synchronized (menuClient) {
+                    menuClient.wait();
+                }
                 dataTransfer.sendMessage("{\"access\": " + "true" + "}");
             } catch (IndexOutOfBoundsException e) {
                 dataTransfer.sendMessage("{\"access\": " + "false" + "}");
