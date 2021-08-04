@@ -6,9 +6,9 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class SnakeClientG extends Thread {
+public class SnakeClientGame extends Thread {
     private volatile String frame = "";
-    private volatile DataTransferG dataTransfer;
+    private volatile DataTransferGame dataTransfer;
     private volatile String control = "a";
     private volatile boolean gameIsActive = false;
 
@@ -100,7 +100,7 @@ public class SnakeClientG extends Thread {
         }
     }
 
-    public SnakeClientG(DataTransferG dataTransfer) {
+    public SnakeClientGame(DataTransferGame dataTransfer) {
         this.dataTransfer = dataTransfer;
     }
 

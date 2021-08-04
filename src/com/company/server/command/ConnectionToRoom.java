@@ -2,7 +2,7 @@ package com.company.server.command;
 
 import com.company.DataTransfer;
 import com.company.server.Room;
-import com.company.server.menu.MenuClient;
+import com.company.server.menu.PerformanceClient;
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.List;
 public class ConnectionToRoom implements Command {
     private final DataTransfer dataTransfer;
     private final List<Room> roomList;
-    private final MenuClient menuClient;
+    private final PerformanceClient menuClient;
 
-    public ConnectionToRoom(DataTransfer dataTransfer, List<Room> roomList, MenuClient menuClient) {
+    public ConnectionToRoom(DataTransfer dataTransfer, List<Room> roomList, PerformanceClient menuClient) {
         this.dataTransfer = dataTransfer;
         this.roomList = roomList;
         this.menuClient = menuClient;

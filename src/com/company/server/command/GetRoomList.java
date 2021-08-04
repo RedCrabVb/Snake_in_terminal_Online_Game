@@ -1,7 +1,7 @@
 package com.company.server.command;
 
 import com.company.DataTransfer;
-import com.company.Main;
+import com.company.SocketAcceptConnection;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class GetRoomList implements Command {
     @Override
     public void execute(JsonObject json) {
         JsonObject jsonRoom = new JsonObject();
-        jsonRoom.addProperty("listRoom", Main.getListRooms());
+        jsonRoom.addProperty("listRoom", SocketAcceptConnection.getListRooms());
         try {
             dataTransfer.sendMessage(jsonRoom.toString());
         } catch (IOException e) {

@@ -1,26 +1,5 @@
 package com.company;
 
-import com.company.client.DataTransferG;
-import com.company.client.SnakeClientG;
-import com.company.dataBase.DataBase;
-import com.company.dataBase.MySqlDataBase;
-import com.company.server.Room;
-import com.company.server.menu.MenuClient;
-import com.company.server.menu.MenuServer;
-import com.google.gson.Gson;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /*class SocketAcceptConnection implements Runnable {
     private final int port;
     private final List<Room> rooms;
@@ -101,8 +80,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 }*/
 
 public class Main {
-    public static DataBase dataBase;
-    private final static List<Room> rooms = new ArrayList<>();
+//    public static DataBase dataBase;
+/*    private final static List<Room> rooms = new ArrayList<>();
 
     public static String getListRooms() {
         var ref = new Object() {
@@ -112,22 +91,22 @@ public class Main {
         AtomicInteger id = new AtomicInteger(0);
         rooms.forEach(r -> ref.print += (id.incrementAndGet() + " " + r.toString()) + "\n");
         return ref.print;
-    }
+    }*/
 
-    public static void removeRoom(Room room) {
+/*    public static void removeRoom(Room room) {
         rooms.remove(room);
-    }
+    }*/
 
     public static void main(String[] args) throws Exception {
-        Scanner scanner = new Scanner(System.in);
+       /* Scanner scanner = new Scanner(System.in);
         System.out.println("Enter 1 or 2: \n 1) Create server \n 2) Connect server");
         String selection = scanner.nextLine();
         if (selection.equals("1")) {
-            Main.dataBase = ParseConfig.createDataBase(args);
+            SocketAcceptConnection.dataBase = ParseConfig.createDataBase(args);
             System.out.println("Enter port for program");
             int port = scanner.nextInt();
-            new Thread(new MenuServer(rooms)).start();
-            new Thread(new SocketAcceptConnection(port, rooms)).start();
+            new Thread(new PerformanceServer("")).start();
+            new Thread(new SocketAcceptConnection(port)).start();
         } else if (selection.equals("2")) {
             System.out.println("Enter ip server");
             String ip = "127.0.0.1";//scanner.nextLine();
@@ -137,8 +116,8 @@ public class Main {
             SnakeClientG snakeClientGame = new SnakeClientG(new DataTransferG(new Socket(ip, Integer.parseInt(port))));
             snakeClientGame.start();
         } else {
-            throw new IOException("Error enter data");
-        }
+            throw new IOException("Error enter data");*/
+        //}
     }
 
 }

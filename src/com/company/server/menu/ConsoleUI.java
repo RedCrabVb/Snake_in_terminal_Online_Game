@@ -1,10 +1,9 @@
 package com.company.server.menu;
 
-import com.company.Main;
 import com.company.ParseConfig;
 import com.company.SocketAcceptConnection;
-import com.company.client.DataTransferG;
-import com.company.client.SnakeClientG;
+import com.company.client.DataTransferGame;
+import com.company.client.SnakeClientGame;
 import com.company.server.Room;
 
 import java.io.IOException;
@@ -13,8 +12,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-public class ConsoleUI extends UI {
+public class ConsoleUI implements UI {
     private Scanner scanner;
+    private PerformanceServer performanceServer;
 
     String startConfig = "Enter 1 or 2: \n 1) Create server \n 2) Connect server";
     String enterPortForProgram = "Enter port for program";
@@ -38,38 +38,38 @@ public class ConsoleUI extends UI {
 
     @Override
     public void showAllRooms() {
-        System.out.println(Main.getListRooms());
+        System.out.println(SocketAcceptConnection.getListRooms());
     }
 
     @Override
     public void connectionToRooms(int number) {
-//        try {
-//            rooms.get(numberRoom).addUser(this);
-//            stopMenu();
-//        } catch (IndexOutOfBoundsException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            SocketAcceptConnection.addUserToRoom(number, performanceServer);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void createRoom(String nameRoom) {
 //        rooms.add(new Room(scanner.nextLine()));
+        SocketAcceptConnection.addRooms(nameRoom);
     }
 
     @Override
     public void showRecorde() {
-        System.out.println(Main.dataBase.getRecorde());
+        System.out.println(SocketAcceptConnection.dataBase.getRecorde());
     }
 
     @Override
     public void createServer(int port, List<Room> rooms) {
-        new Thread(new MenuServer(rooms)).start();
-        new Thread(new SocketAcceptConnection(port, rooms)).start();
+//        new Thread(new PerformanceServer("")).start();
+        new Thread(new SocketAcceptConnection(port)).start();
     }
 
     @Override
     public void connectionServer(String ip, int port) throws IOException {
-        SnakeClientG snakeClientGame = new SnakeClientG(new DataTransferG(new Socket(ip, port)));
+        SnakeClientGame snakeClientGame = new SnakeClientGame(new DataTransferGame(new Socket(ip, port)));
         snakeClientGame.start();
     }
 
@@ -79,7 +79,7 @@ public class ConsoleUI extends UI {
         System.out.println(startConfig);
         int input = scanner.nextInt();
         if (input == 1) {
-            Main.dataBase = ParseConfig.createDataBase(args);
+            SocketAcceptConnection.dataBase = ParseConfig.createDataBase(args);
             System.out.println("Enter port for program");
             int port = scanner.nextInt();
             createServer(port, rooms);
@@ -99,6 +99,13 @@ public class ConsoleUI extends UI {
         login = scanner.nextLine();
         System.out.println(getPassword);
         password = scanner.nextLine();
+
+        this.performanceServer = new PerformanceServer(login);
+
+        if (!SocketAcceptConnection.dataBase.isRealAccount(login, password)) {
+            System.out.println(falseEnterData);
+            System.exit(0);
+        }
 
         while (true) {
             System.out.println(menu);

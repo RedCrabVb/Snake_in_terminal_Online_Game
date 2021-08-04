@@ -1,7 +1,7 @@
 package com.company.server.menu;
 
 import com.company.DataTransfer;
-import com.company.Main;
+import com.company.SocketAcceptConnection;
 import com.company.server.Room;
 import com.company.server.command.*;
 import com.google.gson.JsonObject;
@@ -11,12 +11,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.List;
 
-public class MenuClient extends Menu implements Runnable {
+public class PerformanceClient implements Runnable, Performance {
     private volatile DataTransfer dataTransfer;
     private final CommandSwitch commandSwitch;
     private String username;
 
-    public MenuClient(DataTransfer dataTransfer, List<Room> roomList) {
+    public PerformanceClient(DataTransfer dataTransfer, List<Room> roomList) {
         this.dataTransfer = dataTransfer;
         this.commandSwitch = new CommandSwitch();
         this.commandSwitch.register("GetRoom", new GetRoomList(dataTransfer));
@@ -35,7 +35,7 @@ public class MenuClient extends Menu implements Runnable {
         try {
             JsonObject regJson = JsonParser.parseString(dataTransfer.getMessage()).getAsJsonObject();
             username = regJson.get("username").getAsString();
-            boolean reg = Main.dataBase.isRealAccount(username, regJson.get("password").getAsString());
+            boolean reg = SocketAcceptConnection.dataBase.isRealAccount(username, regJson.get("password").getAsString());
             JsonObject jsonAnswer = new JsonObject();
             jsonAnswer.addProperty("access", reg);
             dataTransfer.sendMessage(jsonAnswer.toString());
@@ -48,7 +48,7 @@ public class MenuClient extends Menu implements Runnable {
 
 
         while (!Thread.currentThread().isInterrupted()) {
-            if (isRunMenu()) {
+//            if (isRunMenu()) {
                 try {
                     commandSwitch.execute(dataTransfer.getMessage());
                 } catch (EOFException e) {
@@ -58,14 +58,13 @@ public class MenuClient extends Menu implements Runnable {
                 catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else {
-                try {
-                    wait();
-                    startMenu();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//            } else {
+//                try {
+//                    wait();
+//                    startMenu();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
             }
         }
-    }
 }

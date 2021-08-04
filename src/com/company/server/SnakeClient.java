@@ -7,7 +7,7 @@ import com.company.server.command.CloseRoom;
 import com.company.server.command.CommandSwitch;
 import com.company.server.command.GetFrame;
 import com.company.server.command.SetDirection;
-import com.company.server.menu.Menu;
+import com.company.server.menu.Performance;
 
 import java.io.EOFException;
 import java.util.LinkedList;
@@ -19,7 +19,7 @@ public class SnakeClient extends Snake implements Runnable {
     private boolean isCloseRoom = false;
     private final Thread thread;
 
-    public SnakeClient(LinkedList<Vector2> snake, DataTransfer dataTransfer, Menu menu) {
+    public SnakeClient(LinkedList<Vector2> snake, DataTransfer dataTransfer, Performance menu) {
         super(snake, Config.RED, menu);
         this.dataTransfer = dataTransfer;
         this.moveController = "";

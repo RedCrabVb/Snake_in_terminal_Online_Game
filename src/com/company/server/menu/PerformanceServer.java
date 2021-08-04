@@ -1,21 +1,15 @@
 package com.company.server.menu;
 
-import com.company.Main;
-import com.company.server.Room;
-
-import java.util.*;
-import java.util.Scanner;
-
-public class MenuServer extends Menu implements Runnable {
-    private final List<Room> rooms;
+public class PerformanceServer extends Performance implements Runnable {
     private String username;
 
-    public MenuServer(List<Room> rooms) {
-        this.rooms = rooms;
+    public PerformanceServer(String username) {
+        this.username = username;
     }
 
     @Override
     public synchronized void run() {
+/*
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter your username and password, " +
@@ -28,12 +22,13 @@ public class MenuServer extends Menu implements Runnable {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        if (!Main.dataBase.isRealAccount(username, password)) {
+        if (!SocketAcceptConnection.dataBase.isRealAccount(username, password)) {
             System.out.println("False data");
             System.exit(0);
         }
+*/
 
-        while (!Thread.currentThread().isInterrupted()) {
+/*        while (!Thread.currentThread().isInterrupted()) {
             if (isRunMenu()) {
                 System.out.println("Enter menu item");
                 System.out.println("1. Show list rooms");
@@ -46,13 +41,13 @@ public class MenuServer extends Menu implements Runnable {
 
                     switch (inputData) {
                         case "1":
-                            System.out.println(Main.getListRooms());
+                            System.out.println(SocketAcceptConnection.getListRooms());
                             break;
                         case "2":
                             System.out.println("Enter number rooms");
                             int numberRoom = Integer.parseInt(scanner.nextLine()) - 1;
                             try {
-                                rooms.get(numberRoom).addUser(this);
+                                SocketAcceptConnection.addUserToRoom(numberRoom, this);
                                 stopMenu();
                             } catch (IndexOutOfBoundsException e) {
                                 e.printStackTrace();
@@ -60,10 +55,10 @@ public class MenuServer extends Menu implements Runnable {
                             break;
                         case "3":
                             System.out.print("Enter name rooms: ");
-                            rooms.add(new Room(scanner.nextLine()));
+                            SocketAcceptConnection.addRooms(scanner.nextLine());
                             break;
                         case "4":
-                            System.out.println(Main.dataBase.getRecorde());
+                            System.out.println(SocketAcceptConnection.dataBase.getRecorde());
                             break;
                         default:
                             System.out.println("Error enter data");
@@ -81,7 +76,7 @@ public class MenuServer extends Menu implements Runnable {
                 }
                 System.out.println("false run menu server");
             }
-        }
+        }*/
     }
 
     public String getUsername() {

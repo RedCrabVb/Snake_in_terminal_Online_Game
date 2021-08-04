@@ -1,10 +1,7 @@
 package com.company.server;
 
-import com.company.Config;
-import com.company.DataTransfer;
-import com.company.Main;
-import com.company.Vector2;
-import com.company.server.menu.Menu;
+import com.company.*;
+import com.company.server.menu.Performance;
 
 import java.util.*;
 
@@ -34,14 +31,14 @@ public class Room extends Thread {
         this.start();
     }
 
-    public void addUser(DataTransfer dataTransfer, Menu menu) {
+    public void addUser(DataTransfer dataTransfer, Performance menu) {
         LinkedList<Vector2> snakeListVector = createSnake();
         Snake snake = new SnakeClient(snakeListVector, dataTransfer, menu);
         snakeList.add(snake);
         snake.getThread().start();
     }
 
-    public void addUser(Menu menu) {
+    public void addUser(Performance menu) {
         LinkedList<Vector2> snakeListVector = createSnake();
         Snake snake = new SnakeServer(snakeListVector, menu);
         snakeList.add(snake);
@@ -167,7 +164,7 @@ public class Room extends Thread {
         String frame2 = createFrame(map2);
         snake.updateFrame(frame2);
 
-        Main.dataBase.addRecorde(snake.getName(), snake.getSnake().size());
+        SocketAcceptConnection.dataBase.addRecorde(snake.getName(), snake.getSnake().size());
         snake.close();
 
         Thread.sleep(1000);
@@ -178,7 +175,7 @@ public class Room extends Thread {
 
         snakeList.remove(snake);
         if (snakeList.size() < 1) {
-            Main.removeRoom(this);
+            SocketAcceptConnection.removeRooms(this);
             this.interrupt();
         }
     }

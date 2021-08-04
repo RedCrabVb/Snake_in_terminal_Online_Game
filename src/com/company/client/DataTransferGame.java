@@ -6,12 +6,12 @@ import com.google.gson.JsonParser;
 import java.io.*;
 import java.net.Socket;
 
-public class DataTransferG {
+public class DataTransferGame {
     private final Socket socket;
     private final DataInput in;
     private final DataOutput out;
 
-    public DataTransferG(Socket socket) throws IOException {
+    public DataTransferGame(Socket socket) throws IOException {
         this.socket = socket;
 
         in = new DataInputStream(socket.getInputStream());

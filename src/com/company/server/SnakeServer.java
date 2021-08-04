@@ -2,7 +2,7 @@ package com.company.server;
 
 import com.company.Config;
 import com.company.Vector2;
-import com.company.server.menu.Menu;
+import com.company.server.menu.Performance;
 
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -12,7 +12,7 @@ public class SnakeServer extends Snake implements Runnable {
     private final Thread getInput;
     private final Thread thread;
 
-    public SnakeServer(LinkedList<Vector2> snake, Menu menu) {
+    public SnakeServer(LinkedList<Vector2> snake, Performance menu) {
         super(snake, Config.BLUE, menu);
         this.moveController = "";
         getInput = new Thread(new GetInput());
