@@ -7,19 +7,18 @@ import java.io.*;
 import java.net.Socket;
 
 public class DataTransferGame {
-    private final Socket socket;
+//    private final Socket socket;
     private final DataInput in;
     private final DataOutput out;
 
     public DataTransferGame(Socket socket) throws IOException {
-        this.socket = socket;
-
+//        this.socket = socket;
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
     }
 
     public synchronized void sendMessage(String msg) throws IOException {
-        System.out.println(msg);
+//        System.out.println(msg);
         out.writeUTF(msg);
     }
 

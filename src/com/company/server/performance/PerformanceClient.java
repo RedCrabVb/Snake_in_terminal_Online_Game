@@ -1,7 +1,7 @@
-package com.company.server.menu;
+package com.company.server.performance;
 
 import com.company.DataTransfer;
-import com.company.SocketAcceptConnection;
+import com.company.server.SocketAcceptConnection;
 import com.company.server.Room;
 import com.company.server.command.*;
 import com.google.gson.JsonObject;
@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class PerformanceClient implements Runnable, Performance {
-    private volatile DataTransfer dataTransfer;
     private final CommandSwitch commandSwitch;
+    private volatile DataTransfer dataTransfer;
     private String username;
 
     public PerformanceClient(DataTransfer dataTransfer, List<Room> roomList) {
@@ -27,7 +27,7 @@ public class PerformanceClient implements Runnable, Performance {
 
     @Override
     public void runMenu() {
-//        consoleUI.notifyAll();
+        notifyAll();
     }
 
     @Override
@@ -53,23 +53,14 @@ public class PerformanceClient implements Runnable, Performance {
 
 
         while (!Thread.currentThread().isInterrupted()) {
-//            if (isRunMenu()) {
-                try {
-                    commandSwitch.execute(dataTransfer.getMessage());
-                } catch (EOFException e) {
-                    e.printStackTrace();
-                    break;
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-//            } else {
-//                try {
-//                    wait();
-//                    startMenu();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+            try {
+                commandSwitch.execute(dataTransfer.getMessage());
+            } catch (EOFException e) {
+                e.printStackTrace();
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+    }
 }

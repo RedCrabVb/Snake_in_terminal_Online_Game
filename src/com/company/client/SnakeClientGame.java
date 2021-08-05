@@ -7,14 +7,14 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class SnakeClientGame extends Thread {
-    private volatile String frame = "";
+/*    private volatile String frame = "";
     private volatile DataTransferGame dataTransfer;
     private volatile String control = "a";
-    private volatile boolean gameIsActive = false;
+    private volatile boolean gameIsActive = false;*/
 
     @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in);
+/*        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter your username and password, " +
                 "if a user with this name does not exist, " +
@@ -97,18 +97,18 @@ public class SnakeClientGame extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     public SnakeClientGame(DataTransferGame dataTransfer) {
-        this.dataTransfer = dataTransfer;
+//        this.dataTransfer = dataTransfer;
     }
 
-    private class Print implements Runnable {
+    public class Print implements Runnable {
 
         @Override
         public void run() {
-            try {
+/*            try {
                 while (gameIsActive) {
                     frame = dataTransfer.getFrame();
                     print();
@@ -120,14 +120,14 @@ public class SnakeClientGame extends Thread {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
     private void print() {
-        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+/*        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         System.out.println("Client");
 
-        System.out.println(frame);
+        System.out.println(frame);*/
     }
 }

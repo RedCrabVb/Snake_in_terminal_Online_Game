@@ -1,7 +1,7 @@
 package com.company.server.command;
 
 import com.company.DataTransfer;
-import com.company.SocketAcceptConnection;
+import com.company.server.SocketAcceptConnection;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;

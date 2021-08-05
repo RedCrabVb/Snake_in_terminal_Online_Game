@@ -1,7 +1,7 @@
 package com.company.server;
 
 import com.company.*;
-import com.company.server.menu.Performance;
+import com.company.server.performance.Performance;
 
 import java.util.*;
 
@@ -36,7 +36,6 @@ public class Room extends Thread {
         Snake snake = new SnakeClient(snakeListVector, dataTransfer, menu);
         snakeList.add(snake);
         snake.getThread().start();
-//        menu.wait();
     }
 
     public void addUser(Performance menu) throws InterruptedException {
@@ -44,7 +43,6 @@ public class Room extends Thread {
         Snake snake = new SnakeServer(snakeListVector, menu);
         snakeList.add(snake);
         snake.getThread().start();
-//        menu.wait();
     }
 
     @Override

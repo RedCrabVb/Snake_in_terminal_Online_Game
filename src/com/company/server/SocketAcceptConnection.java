@@ -1,9 +1,10 @@
-package com.company;
+package com.company.server;
 
+import com.company.DataTransfer;
 import com.company.dataBase.DataBase;
 import com.company.server.Room;
-import com.company.server.menu.Performance;
-import com.company.server.menu.PerformanceClient;
+import com.company.server.performance.Performance;
+import com.company.server.performance.PerformanceClient;
 
 import java.net.ServerSocket;
 import java.net.Socket;

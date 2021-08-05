@@ -2,7 +2,7 @@ package com.company.server;
 
 import com.company.Config;
 import com.company.Vector2;
-import com.company.server.menu.Performance;
+import com.company.server.performance.Performance;
 
 import java.util.LinkedList;
 import java.util.Scanner;

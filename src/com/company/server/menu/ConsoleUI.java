@@ -1,22 +1,26 @@
 package com.company.server.menu;
 
 import com.company.ParseConfig;
-import com.company.SocketAcceptConnection;
+import com.company.server.SocketAcceptConnection;
+import com.company.client.DataTransferGame;
+import com.company.server.performance.Performance;
+import com.company.server.performance.PerformanceServer;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.sql.SQLException;
 import java.util.Scanner;
 
 public class ConsoleUI {
     private Scanner scanner;
-    private PerformanceServer performanceServer;
+    private Performance performance;
     private UI ui;
 
     String startConfig = "Enter 1 or 2: \n 1) Create server \n 2) Connect server";
     String enterPortForProgram = "Enter port for program: ";
     String ipServer = "Enter ip server: ";
     String portServer = "Enter port server: ";
-    String usersHello = "Enter your username and password, \n" +
+    String usersHello = "\n\nEnter your username and password, \n" +
             "if a user with this name does not exist, \n" +
             "then it will be created, \n" +
             "if it exists and the password is wrong, \n" +
@@ -42,16 +46,18 @@ public class ConsoleUI {
             SocketAcceptConnection.dataBase = ParseConfig.createDataBase(args);
             System.out.print(enterPortForProgram);
             int port = Integer.valueOf(scanner.nextLine());
-            ui = new ClientUI(this);
-            ui.createServer(port);
+
+            ui = new ServerUI(this, port);
+//            ui.createServer(port);
         } else if (input == 2) {
             String ip, port;
             System.out.println(ipServer);
-            ip = scanner.nextLine();
-            System.out.println(portServer);
+            ip = "127.0.0.1";//scanner.nextLine();
+            System.out.print(portServer);
             port = scanner.nextLine();
-            ui = new ClientUI(this);
-            ui.connectionServer(ip, Integer.parseInt(port));
+
+            ui = new ClientUI(ip, Integer.parseInt(port));
+//            ui.connectionServer(ip, Integer.parseInt(port));
         } else {
             throw new IOException(falseEnterData);
         }
@@ -64,9 +70,13 @@ public class ConsoleUI {
         System.out.print(getPassword);
         password = scanner.nextLine();
 
-        this.performanceServer = new PerformanceServer(login, this);
 
-        if (!SocketAcceptConnection.dataBase.isRealAccount(login, password)) {
+        if (ui instanceof ServerUI) {
+            this.performance = new PerformanceServer(login, this);
+            ((ServerUI) ui).setPerformance(performance);
+        }
+
+        if (!ui.registration(login, password)) {
             System.out.println(falseEnterData);
             System.exit(0);
         }
@@ -84,7 +94,7 @@ public class ConsoleUI {
                     case "2":
                         System.out.print(enterNumberRoom);
                         int numberRoom = Integer.parseInt(scanner.nextLine()) - 1;
-                        ui.connectionToRooms(numberRoom, this.performanceServer);
+                        ui.connectionToRooms(numberRoom);
                         break;
                     case "3":
                         System.out.print(enterNameRoom);

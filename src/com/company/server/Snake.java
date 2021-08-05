@@ -2,7 +2,7 @@ package com.company.server;
 
 import com.company.Controller;
 import com.company.Vector2;
-import com.company.server.menu.Performance;
+import com.company.server.performance.Performance;
 
 import java.util.LinkedList;
 

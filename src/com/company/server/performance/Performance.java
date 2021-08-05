@@ -1,4 +1,4 @@
-package com.company.server.menu;
+package com.company.server.performance;
 
 public interface Performance {
     String getUsername();

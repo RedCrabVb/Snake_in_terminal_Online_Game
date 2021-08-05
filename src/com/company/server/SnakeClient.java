@@ -7,7 +7,7 @@ import com.company.server.command.CloseRoom;
 import com.company.server.command.CommandSwitch;
 import com.company.server.command.GetFrame;
 import com.company.server.command.SetDirection;
-import com.company.server.menu.Performance;
+import com.company.server.performance.Performance;
 
 import java.io.EOFException;
 import java.util.LinkedList;

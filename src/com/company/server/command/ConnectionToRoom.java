@@ -2,7 +2,7 @@ package com.company.server.command;
 
 import com.company.DataTransfer;
 import com.company.server.Room;
-import com.company.server.menu.PerformanceClient;
+import com.company.server.performance.PerformanceClient;
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -20,14 +20,14 @@ public class ConnectionToRoom implements Command {
 
     @Override
     public void execute(JsonObject json) {
-        int numberRoom = json.get("numberRoom").getAsInt() - 1;
+        int numberRoom = json.get("numberRoom").getAsInt();
         try {
             try {
                 roomList.get(numberRoom).addUser(dataTransfer, menuClient);
+                dataTransfer.sendMessage("{\"access\": " + "true" + "}");
                 synchronized (menuClient) {
                     menuClient.wait();
                 }
-                dataTransfer.sendMessage("{\"access\": " + "true" + "}");
             } catch (IndexOutOfBoundsException e) {
                 dataTransfer.sendMessage("{\"access\": " + "false" + "}");
                 e.printStackTrace();
